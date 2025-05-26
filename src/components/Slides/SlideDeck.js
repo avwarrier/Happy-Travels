@@ -18,13 +18,18 @@ const SlideDeck = () => {
     }
 
     const [priceRange, setPriceRange] = useState([5000, 15000]);
+    const [cleanlinessValue, setCleanlinessValue] = useState(5);
     const [importance, setImportance] = React.useState({
         price: '',
+        cleanliness: '',
         //add more parameters here
     });
 
     const handlePriceChange = (event, newValue) => {
         setPriceRange(newValue);
+    };
+    const handleCleanlinessChange = (event, newValue) => {
+        setCleanlinessValue(newValue);
     };
 
     switch (currentSlide) {
@@ -56,6 +61,7 @@ const SlideDeck = () => {
                     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
                         <p className='text-2xl font-bold'>Airbnb Pricing</p>
                         <p>Airbnb prices in Europe can vary greatly from city to city</p>
+                        <p>The average price of an Airbnb in Europe is 318.18</p>
                         <p>When travelling, what are the lowest and highest prices you're willing to pay?</p>
                         <p>Select the price range that best suits your budget below</p>
                         <Slider
@@ -107,9 +113,80 @@ const SlideDeck = () => {
             );
         case 3:
             return (
-                <Slide end prev={prevSlide} next={nextSlide}>
+                <Slide prev={prevSlide} next={nextSlide}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
                         <p className='text-2xl font-bold'>Visualization for Price</p>
+                    </div>
+                </Slide>
+            )
+        case 4:
+            return (
+                <Slide prev={prevSlide} next={nextSlide}>
+                    <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
+                        <p className='text-2xl font-bold'>Property Cleanliness</p>
+                        <p>Cleanliness is important to many travellers and can be a deal breaker in some cases</p>
+                        <p>Different properties have different cleanliness ratings with an average of 9.39/10 (really high!)</p>
+                        <p>When travelling, what is the lowest cleanliness rating you're willing to accept?</p>
+                        <p>Select the value below</p>
+                        <Slider
+                            sx={{ color: 'black' }}
+                            getAriaLabel={() => 'Cleanliness value'}
+                            value={cleanlinessValue}
+                            onChange={handleCleanlinessChange}
+                            valueLabelDisplay="auto"
+                            min={0}
+                            max={10}
+                            valueLabelFormat={value => `${value}`}
+                        />
+                        <p>Lowest Cleanliness: {cleanlinessValue}</p>
+                        <p>How important is cleanliness to you?</p>
+                        <FormControl sx={{ width: '20%' }}>
+                            <InputLabel
+                                sx={{
+                                    '&.Mui-focused': {
+                                        color: 'black',
+                                    },
+                                }}
+                            >
+                                Select Value
+                            </InputLabel>
+                            <Select
+                                value={importance.cleanliness}
+                                label="Select Value"
+                                onChange={(event) => setImportance({...importance, cleanliness: event.target.value})}
+                                inputProps={{}}
+                                sx={{
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'black',
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'black',
+                                    },
+                                }}
+                            >
+                                <MenuItem value={10}>5 - Very Important</MenuItem>
+                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={40}>2 - Not Important</MenuItem>
+                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                </Slide>
+            );
+        case 5:
+            return (
+                <Slide prev={prevSlide} next={nextSlide}>
+                    <div className='flex flex-col items-center h-full w-full p-[30px]'>
+                        <p className='text-2xl font-bold'>Visualization for Cleanliness</p>
+                    </div>
+                </Slide>
+            )
+        case 6:
+            return (
+                <Slide end prev={prevSlide} next={nextSlide}>
+                    <div className='flex flex-col items-center h-full w-full p-[30px]'>
+                        <p className='text-2xl font-bold'>END</p>
                     </div>
                 </Slide>
             )
