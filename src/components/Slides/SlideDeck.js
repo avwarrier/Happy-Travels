@@ -187,11 +187,11 @@ const SlideDeck = () => {
                                     },
                                 }}
                             >
-                                <MenuItem value={10}>5 - Very Important</MenuItem>
-                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
-                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
-                                <MenuItem value={40}>2 - Not Important</MenuItem>
-                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                                <MenuItem value={5}>5 - Very Important</MenuItem>
+                                <MenuItem value={4}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={3}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={2}>2 - Not Important</MenuItem>
+                                <MenuItem value={1}>1 - Don't Care</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -253,11 +253,11 @@ const SlideDeck = () => {
                                     },
                                 }}
                             >
-                                <MenuItem value={10}>5 - Very Important</MenuItem>
-                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
-                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
-                                <MenuItem value={40}>2 - Not Important</MenuItem>
-                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                                <MenuItem value={5}>5 - Very Important</MenuItem>
+                                <MenuItem value={4}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={3}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={2}>2 - Not Important</MenuItem>
+                                <MenuItem value={1}>1 - Don't Care</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -334,11 +334,11 @@ const SlideDeck = () => {
                                     },
                                 }}
                             >
-                                <MenuItem value={10}>5 - Very Important</MenuItem>
-                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
-                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
-                                <MenuItem value={40}>2 - Not Important</MenuItem>
-                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                                <MenuItem value={5}>5 - Very Important</MenuItem>
+                                <MenuItem value={4}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={3}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={2}>2 - Not Important</MenuItem>
+                                <MenuItem value={1}>1 - Don't Care</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -415,11 +415,11 @@ const SlideDeck = () => {
                                     },
                                 }}
                             >
-                                <MenuItem value={10}>5 - Very Important</MenuItem>
-                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
-                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
-                                <MenuItem value={40}>2 - Not Important</MenuItem>
-                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                                <MenuItem value={5}>5 - Very Important</MenuItem>
+                                <MenuItem value={4}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={3}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={2}>2 - Not Important</MenuItem>
+                                <MenuItem value={1}>1 - Don't Care</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -481,11 +481,11 @@ const SlideDeck = () => {
                                     },
                                 }}
                             >
-                                <MenuItem value={10}>5 - Very Important</MenuItem>
-                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
-                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
-                                <MenuItem value={40}>2 - Not Important</MenuItem>
-                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                                <MenuItem value={5}>5 - Very Important</MenuItem>
+                                <MenuItem value={4}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={3}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={2}>2 - Not Important</MenuItem>
+                                <MenuItem value={1}>1 - Don't Care</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -547,11 +547,11 @@ const SlideDeck = () => {
                                     },
                                 }}
                             >
-                                <MenuItem value={10}>5 - Very Important</MenuItem>
-                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
-                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
-                                <MenuItem value={40}>2 - Not Important</MenuItem>
-                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                                <MenuItem value={5}>5 - Very Important</MenuItem>
+                                <MenuItem value={4}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={3}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={2}>2 - Not Important</MenuItem>
+                                <MenuItem value={1}>1 - Don't Care</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
