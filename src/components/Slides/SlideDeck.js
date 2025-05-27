@@ -20,8 +20,8 @@ const SlideDeck = () => {
     const [priceRange, setPriceRange] = useState([5000, 15000]);
     const [cleanlinessValue, setCleanlinessValue] = useState(5);
     const [importance, setImportance] = React.useState({
-        price: '',
-        cleanliness: '',
+        price: 0,
+        cleanliness: 0,
         //add more parameters here
     });
 
@@ -90,7 +90,10 @@ const SlideDeck = () => {
                             <Select
                                 value={importance.price}
                                 label="Select Value"
-                                onChange={(event) => setImportance({...importance, price: event.target.value})}
+                                onChange={(event) => {
+                                    let num = parseInt(event.target.value[0])
+                                    setImportance({...importance, price: num})
+                                }}
                                 inputProps={{}}
                                 sx={{
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -153,7 +156,10 @@ const SlideDeck = () => {
                             <Select
                                 value={importance.cleanliness}
                                 label="Select Value"
-                                onChange={(event) => setImportance({...importance, cleanliness: event.target.value})}
+                                onChange={(event) => {
+                                    let num = parseInt(event.target.value[0])
+                                    setImportance({...importance, cleanliness: num})
+                                }}
                                 inputProps={{}}
                                 sx={{
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
