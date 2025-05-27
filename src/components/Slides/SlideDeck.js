@@ -24,7 +24,7 @@ const SlideDeck = () => {
     const [superhostPreference, setSuperhostPreference] = useState('');
     const [personCapacity, setPersonCapacity] = useState([1, 4]);
     const [satisfactionScore, setSatisfactionScore] = useState([80, 100]);
-    const [importance, setImportance] = React.useState({
+    const [importance, setImportance] = useState({
         price: 0,
         cleanliness: 0,
         distance: 0,
@@ -110,8 +110,7 @@ const SlideDeck = () => {
                                 value={importance.price}
                                 label="Select Value"
                                 onChange={(event) => {
-                                    let num = parseInt(event.target.value[0])
-                                    setImportance({...importance, price: num})
+                                    setImportance({...importance, price: event.target.value})
                                 }}
                                 inputProps={{}}
                                 sx={{
@@ -123,11 +122,11 @@ const SlideDeck = () => {
                                     },
                                 }}
                             >
-                                <MenuItem value={10}>5 - Very Important</MenuItem>
-                                <MenuItem value={20}>4 - Pretty Important</MenuItem>
-                                <MenuItem value={30}>3 - Somewhat Important</MenuItem>
-                                <MenuItem value={40}>2 - Not Important</MenuItem>
-                                <MenuItem value={50}>1 - Don't Care</MenuItem>
+                                <MenuItem value={5}>5 - Very Important</MenuItem>
+                                <MenuItem value={4}>4 - Pretty Important</MenuItem>
+                                <MenuItem value={3}>3 - Somewhat Important</MenuItem>
+                                <MenuItem value={2}>2 - Not Important</MenuItem>
+                                <MenuItem value={1}>1 - Don't Care</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -176,8 +175,7 @@ const SlideDeck = () => {
                                 value={importance.cleanliness}
                                 label="Select Value"
                                 onChange={(event) => {
-                                    let num = parseInt(event.target.value[0])
-                                    setImportance({...importance, cleanliness: num})
+                                    setImportance({...importance, cleanliness: event.target.value})
                                 }}
                                 inputProps={{}}
                                 sx={{
@@ -243,8 +241,7 @@ const SlideDeck = () => {
                                 value={importance.distance}
                                 label="Select Value"
                                 onChange={(event) => {
-                                    let num = parseInt(event.target.value[0])
-                                    setImportance({...importance, distance: num})
+                                    setImportance({...importance, distance: event.target.value})
                                 }}
                                 inputProps={{}}
                                 sx={{
@@ -325,8 +322,7 @@ const SlideDeck = () => {
                                 value={importance.roomType}
                                 label="Select Value"
                                 onChange={(event) => {
-                                    let num = parseInt(event.target.value[0])
-                                    setImportance({...importance, roomType: num})
+                                    setImportance({...importance, roomType: event.target.value})
                                 }}
                                 inputProps={{}}
                                 sx={{
@@ -407,8 +403,7 @@ const SlideDeck = () => {
                                 value={importance.superhost}
                                 label="Select Value"
                                 onChange={(event) => {
-                                    let num = parseInt(event.target.value[0])
-                                    setImportance({...importance, superhost: num})
+                                    setImportance({...importance, superhost: event.target.value})
                                 }}
                                 inputProps={{}}
                                 sx={{
@@ -474,8 +469,7 @@ const SlideDeck = () => {
                                 value={importance.capacity}
                                 label="Select Value"
                                 onChange={(event) => {
-                                    let num = parseInt(event.target.value[0])
-                                    setImportance({...importance, capacity: num})
+                                    setImportance({...importance, capacity: event.target.value})
                                 }}
                                 inputProps={{}}
                                 sx={{
@@ -541,8 +535,7 @@ const SlideDeck = () => {
                                 value={importance.satisfaction}
                                 label="Select Value"
                                 onChange={(event) => {
-                                    let num = parseInt(event.target.value[0])
-                                    setImportance({...importance, satisfaction: num})
+                                    setImportance({...importance, satisfaction: event.target.value})
                                 }}
                                 inputProps={{}}
                                 sx={{
