@@ -5,6 +5,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { getCityMatch } from '@/util/functions';
 
 const SlideDeck = () => {
 
@@ -18,20 +19,20 @@ const SlideDeck = () => {
     }
 
     const [priceRange, setPriceRange] = useState([5000, 15000]);
-    const [cleanlinessValue, setCleanlinessValue] = useState(5);
-    const [distanceRange, setDistanceRange] = useState([0, 10]);
+    const [cleanlinessValue, setCleanlinessValue] = useState(6);
+    const [distanceRange, setDistanceRange] = useState([7, 18]);
     const [roomType, setRoomType] = useState('');
     const [superhostPreference, setSuperhostPreference] = useState('');
-    const [personCapacity, setPersonCapacity] = useState([1, 4]);
-    const [satisfactionScore, setSatisfactionScore] = useState([80, 100]);
+    const [personCapacity, setPersonCapacity] = useState([2, 4]);
+    const [satisfactionScore, setSatisfactionScore] = useState(50);
     const [importance, setImportance] = useState({
-        price: 0,
-        cleanliness: 0,
-        distance: 0,
-        roomType: 0,
-        superhost: 0,
-        capacity: 0,
-        satisfaction: 0,
+        price: '',
+        cleanliness: '',
+        distance: '',
+        roomType: '',
+        superhost: '',
+        capacity: '',
+        satisfaction: '',
         //add more parameters here
     });
 
@@ -50,6 +51,13 @@ const SlideDeck = () => {
     const handleSatisfactionChange = (event, newValue) => {
         setSatisfactionScore(newValue);
     };
+
+    const [topCities, setTopCities] = useState();
+    const getTopCities = () => {
+        console.log(priceRange, cleanlinessValue, distanceRange, roomType, superhostPreference, personCapacity, satisfactionScore, importance);
+        const tc = getCityMatch(true, priceRange, cleanlinessValue, distanceRange, superhostPreference, personCapacity, satisfactionScore, importance);
+        setTopCities(tc);
+    }
 
     switch (currentSlide) {
         case 0:
@@ -74,13 +82,13 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 2: // Price Range: 39.54 - 21083.39 avg 318.18
+        case 2:
             return (
                 <Slide prev={prevSlide} next={nextSlide}>
                     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
                         <p className='text-2xl font-bold'>Airbnb Pricing</p>
                         <p>Airbnb prices in Europe can vary greatly from city to city</p>
-                        <p>The average price of an Airbnb in Europe is 318.18</p>
+                        <p>The average price of an Airbnb in Europe is 279.88 per night</p>
                         <p>When travelling, what are the lowest and highest prices you're willing to pay?</p>
                         <p>Select the price range that best suits your budget below</p>
                         <Slider
@@ -89,8 +97,8 @@ const SlideDeck = () => {
                             value={priceRange}
                             onChange={handlePriceChange}
                             valueLabelDisplay="auto"
-                            min={39.54}
-                            max={21083.39}
+                            min={34.78}
+                            max={18545.45}
                             valueLabelFormat={value => `$${value}`}
                         />
                         <p>Lowest Price: ${priceRange[0]}</p>
@@ -155,7 +163,7 @@ const SlideDeck = () => {
                             value={cleanlinessValue}
                             onChange={handleCleanlinessChange}
                             valueLabelDisplay="auto"
-                            min={0}
+                            min={2}
                             max={10}
                             valueLabelFormat={value => `${value}`}
                         />
@@ -211,7 +219,7 @@ const SlideDeck = () => {
                     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
                         <p className='text-2xl font-bold'>Distance from City</p>
                         <p>The proximity to the actual city in Europe can affect your travel experience and convenience.</p>
-                        <p>The average distance from cities for Airbnb listings in Europe is about 2 kilometers.</p>
+                        <p>The average distance from cities for Airbnb listings in Europe is about 3.19 kilometers.</p>
                         <p>When traveling, how close or far from the city would you prefer to stay?</p>
                         <p>Select the distance range that best suits your travel needs below</p>
                         <Slider
@@ -220,8 +228,8 @@ const SlideDeck = () => {
                             value={distanceRange}
                             onChange={handleDistanceChange}
                             valueLabelDisplay="auto"
-                            min={0}
-                            max={20}
+                            min={0.02}
+                            max={25.28}
                             valueLabelFormat={value => `${value} km`}
                         />
                         <p>Minimum Distance: {distanceRange[0]} km</p>
@@ -505,7 +513,7 @@ const SlideDeck = () => {
                     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
                         <p className='text-2xl font-bold'>Guest Satisfaction Score</p>
                         <p>Airbnb collects feedback from guests to rate their overall satisfaction with a listing, taking into account factors such as cleanliness, accuracy, and communication.</p>
-                        <p>The average guest satisfaction score for Airbnb listings in Europe is 90.</p>
+                        <p>The average guest satisfaction score for Airbnb listings in Europe is 92.63.</p>
                         <p>What is the minimum guest satisfaction score you would accept?</p>
                         <p>Use the slider below to set your preferred range.</p>
                         <Slider
@@ -518,8 +526,7 @@ const SlideDeck = () => {
                             max={100}
                             valueLabelFormat={value => `${value}%`}
                         />
-                        <p>Minimum Score: {satisfactionScore[0]}%</p>
-                        <p>Maximum Score: {satisfactionScore[1]}%</p>
+                        <p>Minimum Score: {satisfactionScore}%</p>
                         <p>How important is guest satisfaction score to you?</p>
                         <FormControl sx={{ width: '20%' }}>
                             <InputLabel
@@ -567,8 +574,20 @@ const SlideDeck = () => {
             )
         case 16:
             return (
+                <Slide prev={prevSlide} next={nextSlide}>
+                    <div className='flex flex-col items-center h-full w-full p-[30px]'>
+                        <button onClick={getTopCities} className='cursor-pointer w-[200px] h-[100px] shadow bg-black text-white'>City Matches</button>
+                    </div>
+                </Slide>
+            )
+        case 17:
+            return (
                 <Slide end prev={prevSlide} next={nextSlide}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
+                        <p>Top Cities!</p>
+                        <p>1st Place - {topCities[0].city} with a {topCities[0].score }% match</p>
+                        <p>2nd Place - {topCities[1].city} with a {topCities[1].score}% match</p>
+                        <p>3rd Place - {topCities[2].city} with a {topCities[2].score}% match</p>
                         <p className='text-2xl font-bold'>END</p>
                     </div>
                 </Slide>
