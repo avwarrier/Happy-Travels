@@ -13,7 +13,6 @@ export function getCityMatch(weekday, priceRange, cleanlinessValue, distanceRang
         // Price Range
         score += handleRange(city.price, priceRange, importance.price, 34.78, 18545.45);
 
-        console.log(score)
 
         // Cleanliness
         if (city.cleanliness >= cleanlinessValue) {
@@ -40,11 +39,9 @@ export function getCityMatch(weekday, priceRange, cleanlinessValue, distanceRang
             score += (city.satisfaction / satisfactionScore) * importance.satisfaction;
         }
 
-        console.log(score)
         cityScores[cityName] = score;
     });
 
-    console.log(cityScores)
 
     let sumOfImportance = 0;
     Object.keys(importance).forEach(key => {

@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { getCityMatch } from '@/util/functions';
+import Link from 'next/link';
 
 const SlideDeck = () => {
 
@@ -18,6 +19,7 @@ const SlideDeck = () => {
         setCurrentSlide(currentSlide - 1);
     }
 
+    const [weekday, setWeekday] = useState(true);
     const [priceRange, setPriceRange] = useState([5000, 15000]);
     const [cleanlinessValue, setCleanlinessValue] = useState(6);
     const [distanceRange, setDistanceRange] = useState([7, 18]);
@@ -26,13 +28,13 @@ const SlideDeck = () => {
     const [personCapacity, setPersonCapacity] = useState([2, 4]);
     const [satisfactionScore, setSatisfactionScore] = useState(50);
     const [importance, setImportance] = useState({
-        price: '',
-        cleanliness: '',
-        distance: '',
-        roomType: '',
-        superhost: '',
-        capacity: '',
-        satisfaction: '',
+        price: 5,
+        cleanliness: 4,
+        distance: 3,
+        roomType: 2,
+        superhost: 1,
+        capacity: 5,
+        satisfaction: 4,
         //add more parameters here
     });
 
@@ -51,13 +53,6 @@ const SlideDeck = () => {
     const handleSatisfactionChange = (event, newValue) => {
         setSatisfactionScore(newValue);
     };
-
-    const [topCities, setTopCities] = useState();
-    const getTopCities = () => {
-        console.log(priceRange, cleanlinessValue, distanceRange, roomType, superhostPreference, personCapacity, satisfactionScore, importance);
-        const tc = getCityMatch(true, priceRange, cleanlinessValue, distanceRange, superhostPreference, personCapacity, satisfactionScore, importance);
-        setTopCities(tc);
-    }
 
     switch (currentSlide) {
         case 0:
@@ -82,6 +77,45 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
+        case 2:
+            return (
+                <Slide prev={prevSlide} next={nextSlide}>
+                    <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
+                        <p className='text-2xl font-bold'>Airbnb Pricing</p>
+                        <p>Would you be staying on a weekday or weekend?</p>
+                        <FormControl sx={{ width: '20%' }}>
+                            <InputLabel
+                                sx={{
+                                    '&.Mui-focused': {
+                                        color: 'black',
+                                    },
+                                }}
+                            >
+                                Select Day
+                            </InputLabel>
+                            <Select
+                                value={weekday}
+                                label="Select Value"
+                                onChange={(event) => {
+                                    setWeekday(event.target.value)
+                                }}
+                                inputProps={{}}
+                                sx={{
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'black',
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'black',
+                                    },
+                                }}
+                            >
+                                <MenuItem value={true}>Weekday</MenuItem>
+                                <MenuItem value={false}>Weekend</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                </Slide>
+            );
         case 2:
             return (
                 <Slide prev={prevSlide} next={nextSlide}>
@@ -574,21 +608,29 @@ const SlideDeck = () => {
             )
         case 16:
             return (
-                <Slide prev={prevSlide} next={nextSlide}>
-                    <div className='flex flex-col items-center h-full w-full p-[30px]'>
-                        <button onClick={getTopCities} className='cursor-pointer w-[200px] h-[100px] shadow bg-black text-white'>City Matches</button>
-                    </div>
-                </Slide>
-            )
-        case 17:
-            return (
                 <Slide end prev={prevSlide} next={nextSlide}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
-                        <p>Top Cities!</p>
-                        <p>1st Place - {topCities[0].city} with a {topCities[0].score }% match</p>
-                        <p>2nd Place - {topCities[1].city} with a {topCities[1].score}% match</p>
-                        <p>3rd Place - {topCities[2].city} with a {topCities[2].score}% match</p>
-                        <p className='text-2xl font-bold'>END</p>
+                        <Link 
+                            href={{
+                                pathname: '/results',
+                                query: {
+                                    weekday: JSON.stringify(weekday),
+
+                                    priceRange: JSON.stringify(priceRange),
+                                    distanceRange: JSON.stringify(distanceRange),
+                                    personCapacity: JSON.stringify(personCapacity),
+
+                                    cleanlinessValue: String(cleanlinessValue),
+                                    satisfactionScore: String(satisfactionScore),
+
+                                    superhostPreference: superhostPreference || '',
+
+                                    importance: JSON.stringify(importance), 
+                                }
+                            }}
+                        >
+                            <button className='cursor-pointer w-[200px] h-[100px] shadow bg-black text-white'>City Matches</button>
+                        </Link>
                     </div>
                 </Slide>
             )
