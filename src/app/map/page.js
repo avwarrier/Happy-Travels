@@ -21,25 +21,42 @@ export default function MapPage() {
   const [cityDataDetails, setCityDataDetails] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
-  const handleCityClick = (city) => {
-    console.log('D3 City Marker clicked:', city);
-    if (selectedCity?.id === city.id) {
-      setSelectedCity(null);
-      setCityDataDetails(null);
-    } else {
-      setSelectedCity(city);
-      setIsLoadingDetails(true);
-      console.log(`Placeholder: Fetch and process CSV data for ${city.name} using D3 for visualizations.`);
-      setTimeout(() => {
-        setCityDataDetails({
-          name: city.name,
-          placeholderData: "Weekday & Weekend Airbnb summary (visualized with D3) will appear here.",
-          // D3 will be used to render charts based on actual data here
-        });
-        setIsLoadingDetails(false);
-      }, 1000);
+const handleCityClick = async (city) => {
+  console.log('D3 City Marker clicked:', city);
+  if (selectedCity?.id === city.id) {
+    setSelectedCity(null);
+    setCityDataDetails(null);
+  } else {
+    setSelectedCity(city);
+    setIsLoadingDetails(true);
+    setCityDataDetails(null); // Clear previous details while loading new ones
+
+    try {
+      // Fetch data from API route
+      const response = await fetch(`/api/airbnb-data/${city.id}`);
+      
+      if (!response.ok) {
+        // Ask for error message from API response if available
+        let errorMsg = `API request failed with status ${response.status}`;
+        try {
+            const errorData = await response.json();
+            errorMsg = errorData.message || errorMsg;
+        } catch (e) { /* ignore if response isn't json */ }
+        throw new Error(errorMsg);
+      }
+
+      const data = await response.json();
+      console.log('Data received from API:', data);
+      setCityDataDetails(data); // Store the aggregated data from your API
+
+    } catch (error) {
+      console.error("Failed to fetch city data:", error);
+      setCityDataDetails({ error: error.message }); // Display error information
+    } finally {
+      setIsLoadingDetails(false);
     }
-  };
+  }
+};
 
   return (
     <>
@@ -82,10 +99,22 @@ export default function MapPage() {
                   </div>
                 ) : cityDataDetails ? (
                   <div className="space-y-4 text-sm">
-                    <p><strong className="text-gray-700">Info:</strong> {cityDataDetails.placeholderData}</p>
+                    <div>
+                      <p><strong className="text-gray-700">Data examined</strong></p>
+                      <p>{cityDataDetails.placeholderData || cityDataDetails.dataSummary} </p>
+                    </div>
+                    <div>
+                      <strong className="text-gray-700">Average Cleanliness:</strong>
+                      <ul className="list-disc list-inside ml-4">
+                        <li>Weekday: {cityDataDetails.avgCleanliness?.weekday?.toFixed(2) ?? 'N/A'}</li>
+                        <li>Weekend: {cityDataDetails.avgCleanliness?.weekend?.toFixed(2) ?? 'N/A'}</li>
+                        <li>Combined: {cityDataDetails.avgCleanliness?.combined?.toFixed(2) ?? 'N/A'}</li>
+                      </ul>
+                    </div>
+
                     {/* This area will be for D3-generated charts/visualizations from CSV data */}
                     <div id="d3-charts-container">
-                       {/* D3 will target this div or similar ones to inject visualizations */}
+                      {/* D3 will target this div or similar ones to inject visualizations */}
                     </div>
                   </div>
                 ) : (
