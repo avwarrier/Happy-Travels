@@ -46,19 +46,55 @@ const page = () => {
     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
         {
             topCities.length > 0 ?
-                <>
-                    <p>Top Cities!</p>
-                    <p>1st Place - {topCities[0].city} with a {topCities[0].score}% match</p>
-                    <p>2nd Place - {topCities[1].city} with a {topCities[1].score}% match</p>
-                    <p>3rd Place - {topCities[2].city} with a {topCities[2].score}% match</p>
-                    <p className='text-2xl font-bold'>END</p>
-                    <Link href="/slides">
-                        <button className='cursor-pointer w-[150px] h-[70px] shadow bg-black text-white'>Back to Quiz</button>
+                <div className='flex flex-col items-center h-full w-[80%] mt-[30px] gap-[20px]'>
+                    <div className='flex w-full justify-between'>
+                        <div>
+                            <p className='text-[#E51D51] text-[2.5vh]'>Final Results</p>
+                            <p className='text-[5vh]'>Top city matches</p>
+                        </div>
+                        <div>
+                            <Link href={"/slides"}>
+                                <button className='h-[5vh] w-[15vh] bg-[#E51D51] cursor-pointer rounded-full shadow-md'>
+                                    <p className='text-white text-[2vh]'>back to quiz</p>
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                    <div className='bg-[#F0F0F0] mt-[20px] w-[80%] h-[500px] rounded-2xl flex justify-center items-end gap-[10%]'>
+                        <div className='flex flex-col gap-[20px] w-[11vw] h-[37vh]'>
+                            <div className='h-[10vh] shadow w-full bg-[#fff] rounded-xl flex items-center justify-center'>
+                                <p className='text-[3vh]'>{topCities[1].city}</p>
+                            </div>
+                            <div className='w-full shadow bg-[#E51D51] h-full rounded-t-xl flex flex-col items-center'>
+                                <p className='mt-[30px] text-[7vh] text-white'>2</p>
+                                <p className='text-[2vh] text-white'>{topCities[1].score}% match</p>
+                            </div>
+                        </div>
+                        <div className='flex flex-col gap-[20px] w-[11vw] h-[50vh]'>
+                            <div className='h-[10vh] shadow w-full bg-[#fff] rounded-xl flex items-center justify-center'>
+                                <p className='text-[3vh]'>{topCities[0].city}</p>
+                            </div>
+                            <div className='w-full shadow bg-[#E51D51] h-full rounded-t-xl flex flex-col items-center'>
+                                <p className='mt-[30px] text-[7vh] text-white'>1</p>
+                                <p className='text-[2vh] text-white'>{topCities[0].score}% match</p>
+                            </div>
+                        </div>
+                        <div className='flex flex-col gap-[20px] w-[11vw] h-[30vh]'>
+                            <div className='h-[10vh] shadow w-full bg-[#fff] rounded-xl flex items-center justify-center'>
+                                <p className='text-[3vh]'>{topCities[2].city}</p>
+                            </div>
+                            <div className='w-full shadow bg-[#E51D51] h-full rounded-t-xl flex flex-col items-center'>
+                                <p className='mt-[30px] text-[7vh] text-white'>3</p>
+                                <p className='text-[2vh] text-white'>{topCities[2].score}% match</p>
+                            </div>
+                        </div>
+                    </div>
+                    <Link href={"/map"}>
+                        <button className='h-[5vh] w-[11vh] mt-[20px] cursor-pointer bg-[#E51D51] rounded-full shadow-md'>
+                            <p className='text-white text-[2vh]'>To map</p>
+                        </button>
                     </Link>
-                    <Link href="/map">
-                        <button className='cursor-pointer w-[150px] h-[70px] shadow bg-black text-white'>To Map</button>
-                    </Link>
-                </>
+                </div>
             :
                 <p>Loading...</p>
         }
