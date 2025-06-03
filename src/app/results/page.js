@@ -18,13 +18,10 @@ const page = () => {
             ? JSON.parse(searchParams.get('priceRange'))
             : []
         const cleanlinessValue = parseInt(searchParams.get('cleanlinessValue'))
-        const distanceRange = searchParams.get('distanceRange')
-            ? JSON.parse(searchParams.get('distanceRange'))
-            : []
+        const distance = parseInt(searchParams.get('cleanlinessValue'))
         const superhostPreference = searchParams.get('superhostPreference') || ''
-        const personCapacity = searchParams.get('personCapacity')
-            ? JSON.parse(searchParams.get('personCapacity'))
-            : []
+        const personCapacity = parseInt(searchParams.get('personCapacity'))
+        console.log(personCapacity)
         const satisfactionScore = parseInt(searchParams.get('satisfactionScore'))
         const importance = searchParams.get('importance')
             ? JSON.parse(searchParams.get('importance'))
@@ -34,7 +31,7 @@ const page = () => {
             weekday,
             priceRange,
             cleanlinessValue,
-            distanceRange,
+            distance,
             superhostPreference,
             personCapacity,
             satisfactionScore,
