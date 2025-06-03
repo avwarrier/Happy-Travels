@@ -1,6 +1,6 @@
 import { cityAvgData } from "./structures";
 
-export function getCityMatch(weekday, priceRange, cleanlinessValue, distance, superhostPreference, personCapacity, satisfactionScore, importance) {
+export function getCityMatch(weekday, price, cleanlinessValue, distance, superhostPreference, personCapacity, satisfactionScore, importance) {
     const cityScores = {};
 
     // City Matching Algorithm
@@ -11,7 +11,11 @@ export function getCityMatch(weekday, priceRange, cleanlinessValue, distance, su
         const city = cityData[cityName];
 
         // Price Range
-        score += handleRange(city.price, priceRange, importance.price, 34.78, 18545.45);
+        if (city.price <= price) {
+            score += importance.price;
+        } else {
+            score += ((604 - city.price) / (604 - price)) * importance.price;
+        }
 
 
         // Cleanliness

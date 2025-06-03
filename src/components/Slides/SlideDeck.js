@@ -1,22 +1,22 @@
 /* components/SlideDeck.js */
 import React, { useState } from 'react';
-import Slide        from './Slide';
-import ProgressBar  from '../ProgressBar';
+import Slide from './Slide';
+import ProgressBar from '../ProgressBar';
 
-import Slider        from '@mui/material/Slider';
-import InputLabel    from '@mui/material/InputLabel';
-import MenuItem      from '@mui/material/MenuItem';
-import FormControl   from '@mui/material/FormControl';
-import Select        from '@mui/material/Select';
+import Slider from '@mui/material/Slider';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 import { useRouter } from 'next/navigation';
 import { getCityMatch } from '@/util/functions';
-import Link          from 'next/link';
+import Link from 'next/link';
 
 const SlideDeck = () => {
   /* ────────── constants ────────── */
   const totalSlides = 20;                                   // keep in sync
-  const gradient    = 'bg-gradient-to-r from-[#E51D51] to-[#D90865]';
+  const gradient = 'bg-gradient-to-r from-[#E51D51] to-[#D90865]';
 
   /* ────────── navigation state ────────── */
   const router = useRouter();
@@ -24,15 +24,15 @@ const SlideDeck = () => {
   const [direction,    setDirection]    = useState('next');
 
   /* ────────── question state (unchanged) ────────── */
-  const [weekday,            setWeekday]            = useState(true);
-  const [priceRange,         setPriceRange]         = useState([5000, 15000]);
-  const [cleanlinessValue,   setCleanlinessValue]   = useState(6);
-  const [distance,           setDistance]           = useState(12);
-  const [metroDistance,      setMetroDistance]      = useState(1.5);
-  const [roomType,           setRoomType]           = useState('');
-  const [superhostPreference,setSuperhostPreference]= useState('');
-  const [personCapacity,     setPersonCapacity]     = useState(0);
-  const [satisfactionScore,  setSatisfactionScore]  = useState(50);
+  const [weekday, setWeekday]= useState(true);
+  const [price, setPrice] = useState(300);
+  const [cleanlinessValue,   setCleanlinessValue] = useState(6);
+  const [distance, setDistance] = useState(12);
+  const [metroDistance, setMetroDistance] = useState(1.5);
+  const [roomType, setRoomType] = useState('');
+  const [superhostPreference, setSuperhostPreference]= useState('');
+  const [personCapacity, setPersonCapacity] = useState(0);
+  const [satisfactionScore, setSatisfactionScore] = useState(50);
   const [importance, setImportance] = useState({
     price: 5,
     cleanliness: 4,
@@ -60,10 +60,9 @@ const SlideDeck = () => {
   };
 
   /* ────────── handler helpers ────────── */
-  const handlePriceChange        = (e, v) => setPriceRange(v);
-  const handleCleanlinessChange  = (e, v) => setCleanlinessValue(v);
-  const handleDistanceChange     = (e, v) => setDistance(v);
-  const handleMetroDistanceChange= (e, v) => setMetroDistance(v);
+  const handleCleanlinessChange = (e, v) => setCleanlinessValue(v);
+  const handleDistanceChange = (e, v) => setDistance(v);
+  const handleMetroDistanceChange = (e, v) => setMetroDistance(v);
   const handleSatisfactionChange = (e, v) => setSatisfactionScore(v);
 
   /* progress for <ProgressBar/> (0 → 1) */
@@ -199,7 +198,7 @@ const SlideDeck = () => {
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 2</span>
                 <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
-                  What is your Max nightly<br />budget (€)
+                  What is your Max nightly<br />budget ($)
                 </h2>
                 <div className="w-full mb-8">
                   <Slider
@@ -216,16 +215,16 @@ const SlideDeck = () => {
                       '& .MuiSlider-track': { backgroundColor: '#191919', height: 6 },
                     }}
                     getAriaLabel={() => 'Price range'}
-                    value={priceRange[1]}
-                    onChange={(e, v) => setPriceRange([priceRange[0], v])}
+                    value={price}
+                    onChange={(e, v) => setPrice(v)}
                     valueLabelDisplay="auto"
-                    min={30}
-                    max={800}
-                    valueLabelFormat={(v) => `${v}€`}
+                    min={20}
+                    max={650}
+                    valueLabelFormat={(v) => `$${v}`}
                   />
                   <div className="flex justify-between text-gray-400 text-base mt-2">
-                    <span>30€</span>
-                    <span>800€</span>
+                    <span>$30</span>
+                    <span>$800</span>
                   </div>
                 </div>
                 <button
@@ -815,19 +814,19 @@ const SlideDeck = () => {
                 </p>
                 <div className="mb-8 max-w-md w-full">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Select your group size</label>
-                  <div className="w-[100px] outline-[#a6a6a6] h-[35px] outline-[0.5] px-[10px] rounded-md flex items-center justify-around bg-gray-100">
+                  <div className="w-[100px] outline-[#a6a6a6] h-[35px] outline-[0.5] px-[10px] rounded-md flex items-center justify-around">
                     <p
                       onClick={() => setPersonCapacity(personCapacity > 0 ? personCapacity - 1 : 0)}
-                      className="cursor-pointer text-2xl font-bold"
+                      className="cursor-pointer text-md"
                     >
                       -
                     </p>
                     <div className="w-[30px] h-[30px] flex justify-center items-center rounded-sm outline-[#a6a6a6] outline-[0.5] bg-white">
-                      <p className="text-lg font-semibold">{personCapacity}</p>
+                      <p className="text-md">{personCapacity}</p>
                     </div>
                     <p
                       onClick={() => setPersonCapacity(personCapacity < 6 ? personCapacity + 1 : 6)}
-                      className="cursor-pointer text-2xl font-bold"
+                      className="cursor-pointer text-md"
                     >
                       +
                     </p>
@@ -901,7 +900,7 @@ const SlideDeck = () => {
                   } else {
                     const queryObj = {
                       weekday:           JSON.stringify(weekday),
-                      priceRange:        JSON.stringify(priceRange),
+                      price:        JSON.stringify(price),
                       distance:          JSON.stringify(distance),
                       personCapacity:    JSON.stringify(personCapacity),
                       cleanlinessValue:  String(cleanlinessValue),
