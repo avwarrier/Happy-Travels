@@ -14,9 +14,7 @@ const page = () => {
         if (!searchParams) return
 
         const weekday = searchParams.get('weekday') === 'true'
-        const priceRange = searchParams.get('priceRange')
-            ? JSON.parse(searchParams.get('priceRange'))
-            : []
+        const price = parseInt(searchParams.get('price'))
         const cleanlinessValue = parseInt(searchParams.get('cleanlinessValue'))
         const distance = parseInt(searchParams.get('cleanlinessValue'))
         const superhostPreference = searchParams.get('superhostPreference') || ''
@@ -29,7 +27,7 @@ const page = () => {
 
         const matches = getCityMatch(
             weekday,
-            priceRange,
+            price,
             cleanlinessValue,
             distance,
             superhostPreference,
