@@ -1,6 +1,6 @@
 import { cityAvgData } from "./structures";
 
-export function getCityMatch(weekday, priceRange, cleanlinessValue, distanceRange, superhostPreference, personCapacity, satisfactionScore, importance) {
+export function getCityMatch(weekday, priceRange, cleanlinessValue, distance, superhostPreference, personCapacity, satisfactionScore, importance) {
     const cityScores = {};
 
     // City Matching Algorithm
@@ -22,7 +22,11 @@ export function getCityMatch(weekday, priceRange, cleanlinessValue, distanceRang
         }
 
         // Distance from City
-        score += handleRange(city.distance, distanceRange, importance.distance, 0.02, 25.28);
+        if (city.distance <= distance) {
+            score += importance.distance;
+        } else {
+            score += ((25.28 - city.distance) / (25.28 - distance)) * importance.distance;
+        }
 
         // Superhost
         if (superhostPreference == 'superhost_only') {
@@ -30,7 +34,11 @@ export function getCityMatch(weekday, priceRange, cleanlinessValue, distanceRang
         }
 
         // Person Capacity
-        score += handleRange(city.capacity, personCapacity, importance.capacity, 2, 6);
+        if (city.capacity >= personCapacity) {
+            score += ((6 - city.capacity) / (6 - personCapacity)) * importance.capacity;
+        } else {
+            score += (city.capacity / personCapacity) * importance.capacity;
+        }
 
         // Guest Satisfaction
         if (city.satisfaction >= satisfactionScore) {

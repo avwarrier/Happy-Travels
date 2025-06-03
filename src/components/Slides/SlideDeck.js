@@ -28,19 +28,29 @@ const SlideDeck = () => {
     const [weekday, setWeekday] = useState(true);
     const [priceRange, setPriceRange] = useState([5000, 15000]);
     const [cleanlinessValue, setCleanlinessValue] = useState(6);
-    const [distanceRange, setDistanceRange] = useState([7, 18]);
+    const [distance, setDistance] = useState(12);
     const [roomType, setRoomType] = useState('');
     const [superhostPreference, setSuperhostPreference] = useState('');
-    const [personCapacity, setPersonCapacity] = useState([2, 4]);
+    const [personCapacity, setPersonCapacity] = useState(0);
     const [satisfactionScore, setSatisfactionScore] = useState(50);
+    // const [importance, setImportance] = useState({
+    //     price: '',
+    //     cleanliness: '',
+    //     distance: '',
+    //     roomType: '',
+    //     superhost: '',
+    //     capacity: '',
+    //     satisfaction: '',
+    //     //add more parameters here
+    // });
     const [importance, setImportance] = useState({
-        price: '',
-        cleanliness: '',
-        distance: '',
-        roomType: '',
-        superhost: '',
-        capacity: '',
-        satisfaction: '',
+        price: 5,
+        cleanliness: 4,
+        distance: 3,
+        roomType: 2,
+        superhost: 1,
+        capacity: 5,
+        satisfaction: 3,
         //add more parameters here
     });
 
@@ -51,10 +61,7 @@ const SlideDeck = () => {
         setCleanlinessValue(newValue);
     };
     const handleDistanceChange = (event, newValue) => {
-        setDistanceRange(newValue);
-    };
-    const handlePersonCapacityChange = (event, newValue) => {
-        setPersonCapacity(newValue);
+        setDistance(newValue);
     };
     const handleSatisfactionChange = (event, newValue) => {
         setSatisfactionScore(newValue);
@@ -279,21 +286,19 @@ const SlideDeck = () => {
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
                         <span className="text-gray-400 text-sm mb-2">Question 2</span>
                         <h2 className="text-2xl font-bold mb-2">Preferred distance from city?</h2>
-                        <p className="text-base text-gray-600 mb-8 max-w-xl">The proximity to the actual city in Europe can affect your travel experience and convenience. The average distance from cities for Airbnb listings in Europe is about 3.19 kilometers. When traveling, how close or far from the city would you prefer to stay?</p>
+                        <p className="text-base text-gray-600 mb-8 max-w-xl">The proximity to the actual city in Europe can affect your travel experience and convenience. The average distance from cities for Airbnb listings in Europe is about 3.19 kilometers. When traveling, what is the farthest from the city you are willing to stay?</p>
                         <div className="mb-8 max-w-md">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Select the distance range that best suits your travel needs</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Select the distance that best suits your travel needs</label>
                             <Slider
                                 sx={{ color: 'black' }}
                                 getAriaLabel={() => 'Distance range'}
-                                value={distanceRange}
+                                value={distance}
                                 onChange={handleDistanceChange}
                                 valueLabelDisplay="auto"
                                 min={0.02}
                                 max={25.28}
                                 valueLabelFormat={value => `${value} km`}
                             />
-                            <p className="mt-2 text-gray-700">Minimum Distance: <span className="font-semibold">{distanceRange[0]}</span> km</p>
-                            <p className="text-gray-700">Maximum Distance: <span className="font-semibold">{distanceRange[1]}</span> km</p>
                         </div>
                         <div className="max-w-xs">
                             <label className="block text-sm font-medium text-gray-700 mb-2">How important is distance to city to you?</label>
@@ -516,21 +521,16 @@ const SlideDeck = () => {
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
                         <span className="text-gray-400 text-sm mb-2">Question 5</span>
                         <h2 className="text-2xl font-bold mb-2">Preferred person capacity?</h2>
-                        <p className="text-base text-gray-600 mb-8 max-w-xl">Airbnb accommodations in Europe cater to a wide range of group sizes, from solo travelers to large families or groups of friends. The average person capacity for Airbnb listings in Europe is 4 people. How many people will be traveling with you? Use the slider below to set your preferred range.</p>
+                        <p className="text-base text-gray-600 mb-8 max-w-xl">Airbnb accommodations in Europe cater to a wide range of group sizes, from solo travelers to large families or groups of friends. The average person capacity for Airbnb listings in Europe is 4 people. How many people will be traveling with you?</p>
                         <div className="mb-8 max-w-md">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Adjust the slider to your group size</label>
-                            <Slider
-                                sx={{ color: 'black' }}
-                                getAriaLabel={() => 'Person capacity range'}
-                                value={personCapacity}
-                                onChange={handlePersonCapacityChange}
-                                valueLabelDisplay="auto"
-                                min={1}
-                                max={6}
-                                valueLabelFormat={value => `${value} people`}
-                            />
-                            <p className="mt-2 text-gray-700">Minimum Capacity: <span className="font-semibold">{personCapacity[0]}</span> people</p>
-                            <p className="text-gray-700">Maximum Capacity: <span className="font-semibold">{personCapacity[1]}</span> people</p>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Select your group size</label>
+                            <div className='w-[100px] outline-[#a6a6a6] h-[35px] outline-[0.5] px-[10px] rounded-md flex items-center justify-around'>
+                                <p onClick={() => setPersonCapacity(personCapacity > 0 ? personCapacity - 1 : 0)} className='cursor-pointer'>-</p>
+                                <div className='w-[30px] hg-[30px] flex justify-center items-center rounded-sm outline-[#a6a6a6] outline-[0.5]'>
+                                    <p>{personCapacity}</p>
+                                </div>
+                                <p onClick={() => setPersonCapacity(personCapacity < 6 ? personCapacity + 1 : 6)} className='cursor-pointer'>+</p>
+                            </div>
                         </div>
                         <div className="max-w-xs">
                             <label className="block text-sm font-medium text-gray-700 mb-2">How important is person capacity to you?</label>
@@ -656,19 +656,18 @@ const SlideDeck = () => {
                                 if (hasEmpty) {
                                     alert('Missing an importance value, please fill them all out!');
                                 } else {
-                                    router.push({
-                                        pathname: '/results',
-                                        query: {
-                                            weekday: JSON.stringify(weekday),
-                                            priceRange: JSON.stringify(priceRange),
-                                            distanceRange: JSON.stringify(distanceRange),
-                                            personCapacity: JSON.stringify(personCapacity),
-                                            cleanlinessValue: String(cleanlinessValue),
-                                            satisfactionScore: String(satisfactionScore),
-                                            superhostPreference: superhostPreference || '',
-                                            importance: JSON.stringify(importance),
-                                        },
-                                    });
+                                    const queryObj = {
+                                        weekday: JSON.stringify(weekday),
+                                        priceRange: JSON.stringify(priceRange),
+                                        distance: JSON.stringify(distance),
+                                        personCapacity: JSON.stringify(personCapacity),
+                                        cleanlinessValue: String(cleanlinessValue),
+                                        satisfactionScore: String(satisfactionScore),
+                                        superhostPreference: superhostPreference || '',
+                                        importance: JSON.stringify(importance),
+                                      };
+                                      const search = new URLSearchParams(queryObj).toString();
+                                      router.push(`/results?${search}`);
                                 }
                             }} className={`cursor-pointer rounded-xl hover:opacity-90 transition-all duration-500 ease-in-out w-[250px] h-[60px] shadow-md ${gradient} text-white`}>Ready to get your top cities?</button>
                     </div>
