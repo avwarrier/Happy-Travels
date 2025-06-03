@@ -147,7 +147,23 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-2 body  */}
+            <div className="flex flex-col items-center h-full w-full p-[30px]">
+              <p className="text-2xl font-bold">Visualization for Weekday/Weekend</p>
+            </div>
+          </Slide>
+        );
+
+      /* ────────────────────────────────── 3 ────────────────────────────────── */
+      case 3:
+        return (
+          <Slide
+            key={currentSlide}
+            motionKey={currentSlide}
+            next={nextSlide}
+            prev={prevSlide}
+            direction={direction}
+          >
+            {/*  existing slide-3 body  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 1</span>
@@ -183,61 +199,6 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 3 ────────────────────────────────── */
-      case 3:
-        return (
-          <Slide
-            key={currentSlide}
-            motionKey={currentSlide}
-            next={nextSlide}
-            prev={prevSlide}
-            direction={direction}
-          >
-            {/*  existing slide-3 body  */}
-            <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 2</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
-                  What is your Max nightly<br />budget ($)
-                </h2>
-                <div className="w-full mb-8">
-                  <Slider
-                    sx={{
-                      color: '#191919',
-                      height: 6,
-                      '& .MuiSlider-thumb': {
-                        width: 24,
-                        height: 24,
-                        backgroundColor: '#fff',
-                        border: '2px solid #191919',
-                      },
-                      '& .MuiSlider-rail': { backgroundColor: '#f3f3f3', height: 6 },
-                      '& .MuiSlider-track': { backgroundColor: '#191919', height: 6 },
-                    }}
-                    getAriaLabel={() => 'Price range'}
-                    value={price}
-                    onChange={(e, v) => setPrice(v)}
-                    valueLabelDisplay="auto"
-                    min={20}
-                    max={650}
-                    valueLabelFormat={(v) => `$${v}`}
-                  />
-                  <div className="flex justify-between text-gray-400 text-base mt-2">
-                    <span>$30</span>
-                    <span>$800</span>
-                  </div>
-                </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-2 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          </Slide>
-        );
-
       /* ────────────────────────────────── 4 ────────────────────────────────── */
       case 4:
         return (
@@ -248,6 +209,7 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
+            {/*  existing slide-4 body  */}
             <div className="flex flex-col items-center h-full w-full p-[30px]">
               <p className="text-2xl font-bold">Visualization for Price</p>
             </div>
