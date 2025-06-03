@@ -8,6 +8,7 @@ import Select from '@mui/material/Select';
 import { getCityMatch } from '@/util/functions';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import WeekdayWeekendViz from '@/components/Visualizations/WeekdayWeekendViz';
 
 const SlideDeck = () => {
     const gradient = "bg-gradient-to-r from-[#E51D51] to-[#D90865]"
@@ -142,6 +143,15 @@ const SlideDeck = () => {
         case 3:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
+                    <div className='flex flex-col items-center justify-center h-full w-full p-[30px]'>
+                        <p className='text-3xl font-bold mb-6'>Weekday vs. Weekend Pricing Insights</p>
+                        <WeekdayWeekendViz userFocusOnWeekday={weekday} />
+                    </div>
+                </Slide>
+            );
+        case 4:
+            return (
+                <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
                         <p className='text-2xl font-bold'>Airbnb Pricing</p>
                         <p>Airbnb prices in Europe can vary greatly from city to city</p>
@@ -197,7 +207,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             );
-        case 4:
+        case 5:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
@@ -205,7 +215,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 5:
+        case 6:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
@@ -265,7 +275,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             );
-        case 6:
+        case 7:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
@@ -273,7 +283,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 7:
+        case 8:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
@@ -334,7 +344,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             );
-        case 8:
+        case 9:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
@@ -342,7 +352,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 9:
+        case 10:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
@@ -418,7 +428,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             );
-        case 10:
+        case 11:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
@@ -426,7 +436,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 11:
+        case 12:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
@@ -502,7 +512,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             );
-        case 12:
+        case 13:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
@@ -510,7 +520,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 13:
+        case 14:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
@@ -571,7 +581,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             );
-        case 14:
+        case 15:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
@@ -579,7 +589,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 15:
+        case 16:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className="flex flex-col bg-white h-full w-full p-12 justify-start">
@@ -639,7 +649,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             );
-        case 16:
+        case 17:
             return (
                 <Slide prev={prevSlide} next={nextSlide} key={currentSlide} direction={direction}>
                     <div className='flex flex-col items-center h-full w-full p-[30px]'>
@@ -647,7 +657,7 @@ const SlideDeck = () => {
                     </div>
                 </Slide>
             )
-        case 17:
+        case 18:
             return (
                 <Slide end prev={prevSlide} next={nextSlide}>
                     <div className='flex justify-center items-center h-full w-full p-[30px]'>
