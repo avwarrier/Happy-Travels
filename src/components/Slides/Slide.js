@@ -1,70 +1,70 @@
-import React from 'react'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import React from 'react';
+import KeyboardArrowUpIcon   from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Slide = ({ children, prev, next, welcome, end, direction = 'next', ...rest }) => {
-    // Animation variants
-    const variants = {
-        enter: (direction) => ({
-            y: direction === 'next' ? 100 : -100,
-            opacity: 0,
-        }),
-        center: {
-            y: 0,
-            opacity: 1,
-            transition: { duration: 0.5, ease: 'easeInOut' }
-        },
-        exit: (direction) => ({
-            y: direction === 'next' ? -100 : 100,
-            opacity: 0,
-            transition: { duration: 0.5, ease: 'easeInOut' }
-        }),
-    };
 
-    return (
-        <div className='flex flex-col items-center h-screen justify-center gap-[20px]'>
-            {
-                !welcome ?
-                    <button
-                        onClick={prev}
-                        className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-200 text-black hover:bg-gray-300 transition-colors duration-200 focus:outline-none cursor-pointer"
-                        aria-label="Previous"
-                    >
-                        <KeyboardArrowUpIcon sx={{ fontSize: 28 }} />
-                    </button>
-                :
-                    <div className='h-[45px]'></div>
-            }
+const Slide = ({
+  children,
+  prev,
+  next,
+  welcome,
+  end,
+  hideNextArrow,
+  direction = 'next',
+  /** a unique value so Framer-Motion can animate between slides */
+  motionKey,
+}) => {
+  /* page-enter / exit variants */
+  const variants = {
+    enter: (dir) => ({ y: dir === 'next' ? 100 : -100, opacity: 0 }),
+    center:       { y: 0, opacity: 1, transition: { duration: 0.5, ease: 'easeInOut' } },
+    exit:  (dir) => ({ y: dir === 'next' ? -100 : 100, opacity: 0,
+                       transition: { duration: 0.5, ease: 'easeInOut' } }),
+  };
 
-            <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                    key={rest.key || 'slide'}
-                    className="h-[70vh] w-[85vw] bg-white rounded-xl"
-                    custom={direction}
-                    variants={variants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                >
-                    {children}
-                </motion.div>
-            </AnimatePresence>
+  return (
+    <div className="relative flex flex-col items-center h-screen justify-center">
+      {/* ───── navigation arrows ───── */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-10">
+        {!welcome && (
+          <button
+            onClick={prev}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-black
+                       hover:bg-pink-500 hover:text-white transition-colors duration-200 focus:outline-none"
+            aria-label="Previous"
+          >
+            <KeyboardArrowUpIcon sx={{ fontSize: 20 }} />
+          </button>
+        )}
+        {!end && !hideNextArrow && (
+          <button
+            onClick={next}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-black
+                       hover:bg-pink-500 hover:text-white transition-colors duration-200 focus:outline-none"
+            aria-label="Next"
+          >
+            <KeyboardArrowDownIcon sx={{ fontSize: 20 }} />
+          </button>
+        )}
+      </div>
 
-            {
-                !end && !rest.hideNextArrow ?
-                    <button
-                        onClick={next}
-                        className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-200 text-black hover:bg-gray-300 transition-colors duration-200 focus:outline-none cursor-pointer"
-                        aria-label="Next"
-                    >
-                        <KeyboardArrowDownIcon sx={{ fontSize: 28 }} />
-                    </button>
-                :
-                    <div className='h-[45px]'></div>
-            }
-        </div>
-    );
-}
+      {/* ───── slide content with enter/exit animation ───── */}
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={motionKey} 
+          custom={direction}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          className="h-[70vh] w-[85vw] bg-white rounded-xl"
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
 
-export default Slide
+export default Slide;
