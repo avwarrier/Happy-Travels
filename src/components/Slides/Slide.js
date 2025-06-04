@@ -58,7 +58,7 @@ const Slide = ({
           initial="enter"
           animate="center"
           exit="exit"
-          className="h-[70vh] w-[85vw] bg-white rounded-xl"
+          className="h-[70vh] w-[98vw] bg-white rounded-xl"
         >
           {children}
         </motion.div>
