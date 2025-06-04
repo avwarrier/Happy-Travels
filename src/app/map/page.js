@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 
 import { europeanCities } from '@/components/Map/cityCoords';
+import { DataExaminedBarChart } from '@/components/Map/D3DataExaminedBarChart';
 
 const EuropeMapLeafletWithNoSSR = dynamic(
   () => import('../../components/Map/Map'),
@@ -100,23 +101,7 @@ const handleCityClick = async (city) => {
                 ) : cityDataDetails ? (
                   <div className=" text-sm">
 
-                    <div>
-                      <h2 className="text-gray-500 font-semibold text-lg">Data Examined</h2>
-                      <div className='flex justify-between w-full my-2'>
-                        <div>
-                          <h4 className='font-semibold'>Weekday rows:</h4>
-                          <p className='text-gray-500'>{cityDataDetails.weekdayRows}</p>
-                        </div>
-                        <div>
-                          <h4 className='font-semibold'>Weekend rows:</h4>
-                          <p className='text-gray-500'>{cityDataDetails.weekendRows}</p>
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className='font-semibold'>Total listings</h4>
-                        <p className='text-gray-500'>{cityDataDetails.weekendRows + cityDataDetails.weekdayRows}</p>
-                      </div>
-                    </div>
+                    <DataExaminedBarChart weekdayRows={parseInt(cityDataDetails.weekdayRows)} weekendRows={parseInt(cityDataDetails.weekendRows)} totalListings={cityDataDetails.weekendRows + cityDataDetails.weekdayRows}/>
 
                     <div className='border border-gray-200 my-4'/>
 
@@ -129,10 +114,6 @@ const handleCityClick = async (city) => {
                       </ul>
                     </div>
 
-                    {/* This area will be for D3-generated charts/visualizations from CSV data */}
-                    <div id="d3-charts-container">
-                      {/* D3 will target this div or similar ones to inject visualizations */}
-                    </div>
                   </div>
                 ) : (
                    <p className="text-gray-500">No details to display.</p>
