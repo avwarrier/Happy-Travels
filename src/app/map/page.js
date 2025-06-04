@@ -6,6 +6,8 @@ import 'leaflet/dist/leaflet.css';
 
 import { europeanCities } from '@/components/Map/cityCoords';
 import { DataExaminedBarChart } from '@/components/Map/D3DataExaminedBarChart';
+import { MetricGaugeChart } from '@/components/Map/D3MetricGaugeChart';
+import { AverageCost } from '@/components/Map/AverageCost';
 
 const EuropeMapLeafletWithNoSSR = dynamic(
   () => import('../../components/Map/Map'),
@@ -107,11 +109,16 @@ const handleCityClick = async (city) => {
 
                     <div>
                       <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Metrics</h2>
-                      <ul className="list-disc list-inside ml-4">
-                        <li>Weekday: {cityDataDetails.avgCleanliness?.weekday?.toFixed(2) ?? 'N/A'}</li>
-                        <li>Weekend: {cityDataDetails.avgCleanliness?.weekend?.toFixed(2) ?? 'N/A'}</li>
-                        <li>Combined: {cityDataDetails.avgCleanliness?.combined?.toFixed(2) ?? 'N/A'}</li>
-                      </ul>
+                      <div className='flex w-full justify-between items-center'>
+                        <AverageCost avgCost={cityDataDetails.avgCost.avgTotalCityCost} weekdayAvgCost={cityDataDetails.avgCost.avgWeekdayCost} weekendAvgCost={cityDataDetails.avgCost.avgWeekendCost}/>
+                        <MetricGaugeChart value={cityDataDetails.avgCleanliness?.combined?.toFixed(2)} label={"Cleanliness"}/>
+                      </div>
+
+                      <div className='flex w-full justify-between items-center my-4'>
+                        {/* Guest satisfaction here */}
+                        {/* Avg person capacity here */}
+                      </div>
+
                     </div>
 
                   </div>

@@ -45,23 +45,27 @@ export async function GET(request, { params }) {
     // ---------------------------------------------------------
     // Right now I am calculating cleanliness, should calculate all valiuable fields and display them
     // then add d3 visuals to them
-    const avgWeekdayCleanliness = average(weekdayData, 'cleanliness_rating');
-    const avgWeekendCleanliness = average(weekendData, 'cleanliness_rating');
-
     const combinedData = [...weekdayData, ...weekendData];
     const avgCombinedCleanliness = average(combinedData, 'cleanliness_rating');
+
+    const avgTotalCityCost = average(combinedData, 'realSum');
+    const avgWeekdayCost = average(weekdayData, 'realSum');
+    const avgWeekendCost = average(weekendData, 'realSum');
 
     // --- TODO: AGGREGATE AND PROCESS THE DATA HERE ---
     const aggregatedData = {
     city: cityId,
     processed: true,
     avgCleanliness: {
-        weekday: avgWeekdayCleanliness,
-        weekend: avgWeekendCleanliness,
         combined: avgCombinedCleanliness,
     },
     weekdayRows: weekdayData.length,
-    weekendRows: weekendData.length
+    weekendRows: weekendData.length,
+    avgCost: {
+      avgTotalCityCost: avgTotalCityCost,
+      avgWeekdayCost: avgWeekdayCost,
+      avgWeekendCost: avgWeekendCost,
+    },
     };
 
     // ---------------------------------------------------------
