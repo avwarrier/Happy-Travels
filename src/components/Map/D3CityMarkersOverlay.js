@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useMap } from 'react-leaflet';
 
-const D3CityMarkersLayer = ({ cities, onCityClick, selectedCityId }) => {
+const D3CityMarkersLayer = ({ cities, onCityClick, selectedCityId, topCities = [] }) => {
   const map = useMap();
   const svgLayerRef = useRef(null); // Holds the D3-managed SVG element
   const gRef = useRef(null); // Holds the group element for markers
@@ -72,10 +72,18 @@ const D3CityMarkersLayer = ({ cities, onCityClick, selectedCityId }) => {
         .attr("cx", d => map.latLngToLayerPoint(d.coordinates).x)
         .attr("cy", d => map.latLngToLayerPoint(d.coordinates).y)
         .attr("r", d => d.id === selectedCityId ? 12 : 8)
-        .attr("fill", d => d.id === selectedCityId ? '#ef4444' : '#3b82f6')
+        .attr("fill", d => {
+          if (d.id === selectedCityId) return '#ef4444';
+
+          if (topCities[0] === d.name) return '#facc15';
+          if (topCities[1] === d.name) return '#6366f1';
+          if (topCities[2] === d.name) return '#10b981';
+
+          return '#3b82f6';
+        })
         .style("fill-opacity", 0.7)
 
-      // Remove old markers if any city is removed (cleanup, good practice)
+      // Remove old markers if any city is removed (cleanup)
       cityMarkers.exit().remove();
 
       // === Render text next to the city markers ===

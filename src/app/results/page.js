@@ -35,9 +35,18 @@ const page = () => {
             satisfactionScore,
             importance
         )
-
         setTopCities(matches)
     }, [searchParams])
+
+
+    useEffect(() => {
+    if (topCities.length >= 3) {
+        console.log("Your top cities are, 1", topCities[0].city);
+        console.log("Your top cities are, 2", topCities[1].city);
+        console.log("Your top cities are, 3", topCities[2].city);
+    }
+}, [topCities]);
+
   return (
     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
         {
@@ -85,7 +94,12 @@ const page = () => {
                             </div>
                         </div>
                     </div>
-                    <Link href={"/map"}>
+                    <Link
+                    href={{pathname: "/map", query: {
+                        top1: topCities[0]?.city,
+                        top2: topCities[1]?.city,
+                        top3: topCities[2]?.city,
+                        },}}>
                         <button className={`h-[5vh] w-[11vh] mt-[20px] cursor-pointer hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} rounded-full shadow-md`}>
                             <p className='text-white text-[2vh]'>To map</p>
                         </button>
