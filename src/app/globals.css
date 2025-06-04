@@ -3,13 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --airbnb-start: #E51D51;
+  --airbnb-end: #D90865;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +22,34 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), sans-serif;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.airbnb-gradient {
+  background: linear-gradient(91deg, var(--airbnb-start) 16.18%, var(--airbnb-end) 86.55%);
+}
+
+/* Consistent text styles */
+h1, h2, h3, h4, h5, h6, p, span, button, input, select {
+  font-style: normal;
+}
+
+/* Question titles */
+h2 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* Form elements */
+.form-group {
+  margin-bottom: 2rem;
+}
+
+/* Input labels */
+label {
+  font-weight: 400;
+  color: #4B5563;
 }

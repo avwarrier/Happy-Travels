@@ -29,7 +29,7 @@ export function getCityMatch(weekday, price, cleanlinessValue, distance, superho
         if (city.distance <= distance) {
             score += importance.distance;
         } else {
-            score += ((25.28 - city.distance) / (25.28 - distance)) * importance.distance;
+            score += ((3 - city.distance) / (3 - distance)) * importance.distance;
         }
 
         // Superhost

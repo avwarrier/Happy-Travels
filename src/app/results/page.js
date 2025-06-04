@@ -16,7 +16,7 @@ const page = () => {
         const weekday = searchParams.get('weekday') === 'true'
         const price = parseInt(searchParams.get('price'))
         const cleanlinessValue = parseInt(searchParams.get('cleanlinessValue'))
-        const distance = parseInt(searchParams.get('cleanlinessValue'))
+        const distance = parseInt(searchParams.get('distance'))
         const superhostPreference = searchParams.get('superhostPreference') || ''
         const personCapacity = parseInt(searchParams.get('personCapacity'))
         console.log(personCapacity)
