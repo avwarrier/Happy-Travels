@@ -179,7 +179,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
     svg.append('path')
       .datum(cdfData)
       .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
+      .attr('stroke', '#E51D51')
       .attr('stroke-width', 2)
       .attr('d', line);
 
@@ -193,8 +193,8 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
 
     svg.append('path')
       .datum(cdfData.filter(d => d.distance <= userMetroDistance + 0.0001)) // Add a small epsilon for floating point
-      .attr('fill', 'lightblue')
-      .attr('opacity', 0.5)
+      .attr('fill', '#E51D51')
+      .attr('opacity', 0.1)
       .attr('d', area);
       
     // Add a point at userMetroDistance to the area data if it's not already there
@@ -223,7 +223,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
     }
      areaData.sort((a,b)=> a.distance - b.distance); // re-sort after potential addition
 
-    svg.select('path[fill="lightblue"]').datum(areaData).attr('d', area);
+    svg.select('path[fill="E51D51"]').datum(areaData).attr('d', area);
 
 
     // User Cutoff Line
@@ -233,14 +233,14 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
         .attr('y1', 0)
         .attr('x2', x(userMetroDistance))
         .attr('y2', height)
-        .attr('stroke', 'red')
-        .attr('stroke-width', 1.5)
-        .attr('stroke-dasharray', '4');
+        .attr('stroke', '#555555')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '5,5');
 
       svg.append('text')
         .attr('x', x(userMetroDistance) + 5)
         .attr('y', y(1) + 15) // Position near top, adjust as needed
-        .attr('fill', 'red')
+        .attr('fill', '#191919')
         .style('font-size', '10px')
         .text(`Your max: ${userMetroDistance.toFixed(1)}km`);
     }
@@ -261,8 +261,8 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
         {loading ? 'Calculating...' : error ? 'Error loading data.' :
          (cityMedianDistances.length > 0 ? 
             (passPercentage === 100 ? 
@@ -274,8 +274,8 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
         }
       </h2>
 
-      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <div 

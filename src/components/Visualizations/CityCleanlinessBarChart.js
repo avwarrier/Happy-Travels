@@ -137,12 +137,14 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .attr('dx', '-.8em')
         .attr('dy', '.15em')
         .attr('transform', 'rotate(-45)')
-        .style('font-size', '10px');
+        .style('font-size', '10px')
+        .style('fill', '#191919');
 
     // Y-axis
     svg.append('g')
       .call(d3.axisLeft(y).ticks(5).tickFormat(d => d))
-      .selectAll('text').style('font-size', '10px');
+      .selectAll('text').style('font-size', '10px')
+      .style('fill', '#191919');
 
     // Lollipop sticks (vertical lines)
     svg.selectAll('.stick')
@@ -165,9 +167,9 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .attr('cy', d => y(d.average))
         .attr('r', 5) // Radius of the dot
         .attr('fill', d => {
-          if (d.average < userMinCleanliness) return '#FF6347'; // Red
-          if (d.average >= grandAverageCleanliness) return '#32CD32'; // LimeGreen
-          return '#4CAF50'; // Green
+          if (d.average < userMinCleanliness) return '#A9A9A9';
+          if (d.average >= grandAverageCleanliness) return '#E51D51';
+          return '#D90865';
         });
 
     // Horizontal line for userMinCleanliness
@@ -175,10 +177,10 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
       svg.append('line')
         .attr('x1', 0).attr('y1', y(userMinCleanliness))
         .attr('x2', width).attr('y2', y(userMinCleanliness))
-        .attr('stroke', '#000000').attr('stroke-width', 1.5).attr('stroke-dasharray', '4');
+        .attr('stroke', '#555555').attr('stroke-width', 2).attr('stroke-dasharray', '5,5');
       svg.append('text')
         .attr('x', width - 5).attr('y', y(userMinCleanliness) - 5)
-        .attr('text-anchor', 'end').style('font-size', '10px').style('fill', 'black')
+        .attr('text-anchor', 'end').style('font-size', '10px').style('fill', '#191919')
         .text(`Your min: ${userMinCleanliness.toFixed(1)}`);
     }
     
@@ -187,10 +189,10 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         svg.append('line')
           .attr('x1', 0).attr('y1', y(grandAverageCleanliness))
           .attr('x2', width).attr('y2', y(grandAverageCleanliness))
-          .attr('stroke', '#007bff').attr('stroke-width', 1.5).attr('stroke-dasharray', '2,2');
+          .attr('stroke', '#555555').attr('stroke-width', 1.5).attr('stroke-dasharray', '2,2');
         svg.append('text')
           .attr('x', 5).attr('y', y(grandAverageCleanliness) - 5)
-          .attr('text-anchor', 'start').style('font-size', '10px').style('fill', '#007bff')
+          .attr('text-anchor', 'start').style('font-size', '10px').style('fill', '#555555')
           .text(`Typical Avg: ${grandAverageCleanliness.toFixed(1)}`);
     }
 
@@ -198,13 +200,13 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
         {loading ? 'Calculating...' : error ? 'Error loading data.' : `${passPercentage}% of cities hit that sparkle level.`}
       </h2>
 
-      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <div 

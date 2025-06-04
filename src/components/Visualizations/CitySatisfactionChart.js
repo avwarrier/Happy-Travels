@@ -49,8 +49,8 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
             console.error(`Error fetching guest_satisfaction_overall for ${city}:`, cityError);
           }
         }
-        // Sort cities by average satisfaction for consistent display (e.g., descending)
-        processedData.sort((a, b) => b.averageSatisfaction - a.averageSatisfaction);
+        // Sort cities by average satisfaction in ascending order (lowest to highest)
+        processedData.sort((a, b) => a.averageSatisfaction - b.averageSatisfaction);
         setCityData(processedData);
       } catch (err) {
         console.error('Error processing base guest_satisfaction_overall data:', err);
@@ -153,11 +153,23 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
       .data(cityData)
       .join('rect')
         .attr('class', 'bar')
-        .attr('x', x(xDomainMin > 0 ? xDomainMin: 0)) // Start bars from the axis min, or 0 if axis includes 0
+        .attr('x', x(xDomainMin > 0 ? xDomainMin: 0))
         .attr('y', d => y(d.city))
         .attr('width', d => x(d.averageSatisfaction) - x(xDomainMin > 0 ? xDomainMin: 0))
         .attr('height', y.bandwidth())
-        .attr('fill', d => d.averageSatisfaction >= userMinSatisfaction ? '#4CAF50' : '#F44336');
+        .attr('fill', (d, i) => {
+          if (d.averageSatisfaction >= userMinSatisfaction) {
+            // Create gradient effect based on position in the sorted array
+            const gradientColors = ['#FF8DA0', '#FF6B85', '#E51D51', '#E51D51', '#D90865'];
+            const index = cityData.findIndex(city => city.city === d.city);
+            const normalizedIndex = index / (cityData.length - 1); // 0 to 1
+            const colorIndex = Math.floor(normalizedIndex * (gradientColors.length - 1));
+            return gradientColors[colorIndex];
+          }
+          return '#A9A9A9'; // Grey for scores below minimum
+        })
+        .attr('stroke', '#191919')
+        .attr('stroke-width', 0.5);
 
     // Value Labels on Bars
     svg.selectAll('.bar-label')
@@ -169,7 +181,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
         .attr('dy', '.35em')
         .attr('text-anchor', 'start')
         .style('font-size', '10px')
-        .style('fill', '#333')
+        .style('fill', '#191919')
         .text(d => d.averageSatisfaction.toFixed(1));
 
     // User Min Satisfaction Line
@@ -179,16 +191,16 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
         .attr('y1', 0)
         .attr('x2', x(userMinSatisfaction))
         .attr('y2', chartHeight)
-        .attr('stroke', '#000000')
+        .attr('stroke', '#555555')
         .attr('stroke-width', 1.5)
         .attr('stroke-dasharray', '4,4');
 
         svg.append('text')
         .attr('x', x(userMinSatisfaction) + 4)
-        .attr('y', -5) // Position above the chart area
+        .attr('y', -5)
         .attr('text-anchor', 'start')
         .style('font-size', '10px')
-        .style('fill', 'black')
+        .style('fill', '#000000')
         .text(`Your Min: ${userMinSatisfaction.toFixed(0)}`);
     }
 
@@ -198,8 +210,8 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
         {loading ? 'Calculating...' : error ? 'Error loading data.' :
           (cityData.length > 0 ? 
             (passPercentage === 100 ? 
@@ -211,8 +223,8 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
         }
       </h2>
 
-      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <div 

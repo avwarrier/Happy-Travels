@@ -141,34 +141,56 @@ const CityCenterDistanceDotPlot = ({ userMaxDistance }) => {
         .attr('class', 'dot')
         .attr('cx', d => x(d.medianDistance))
         .attr('cy', d => y(d.city) + y.bandwidth() / 2)
-        .attr('r', 6) // Dot radius
-        .attr('fill', d => d.medianDistance <= userMaxDistance ? '#4CAF50' : '#cccccc'); // Green if <= userMax, else grey
+        .attr('r', 4)
+        .attr('fill', d => {
+          if (d.medianDistance <= userMaxDistance) {
+            return '#E51D51';
+          }
+          return '#A9A9A9';
+        })
+        .attr('stroke', '#191919')
+        .attr('stroke-width', 0.5);
 
     // User Cutoff Line
     if (userMaxDistance !== null && isFinite(userMaxDistance) && x(userMaxDistance) >= 0 && x(userMaxDistance) <= width) {
       svg.append('line')
         .attr('x1', x(userMaxDistance))
-        .attr('y1', 0)
         .attr('x2', x(userMaxDistance))
-        .attr('y2', height)
-        .attr('stroke', 'red')
-        .attr('stroke-width', 1.5)
-        .attr('stroke-dasharray', '4');
+        .attr('y1', height)
+        .attr('y2', 0)
+        .attr('stroke', '#555555')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '5,5');
 
       svg.append('text')
         .attr('x', x(userMaxDistance) + 5)
         .attr('y', margin.top - 5) // Position near top of chart
-        .attr('fill', 'red')
+        .attr('fill', '#191919')
         .style('font-size', '10px')
         .text(`Your max: ${userMaxDistance.toFixed(1)}km`);
     }
+
+    // Add x-axis
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickFormat(d => `${d}km`))
+      .selectAll('text')
+      .style('font-size', '10px')
+      .style('fill', '#191919');
+
+    // Add y-axis
+    svg.append('g')
+      .call(d3.axisLeft(y))
+      .selectAll('text')
+      .style('font-size', '10px')
+      .style('fill', '#191919');
 
   }, [loading, error, cityMedianDistances, userMaxDistance]);
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
         {loading ? 'Calculating...' : error ? 'Error loading data.' :
           (cityMedianDistances.length > 0 ? 
             (passPercentage === 100 ? 
@@ -180,8 +202,8 @@ const CityCenterDistanceDotPlot = ({ userMaxDistance }) => {
         }
       </h2>
 
-      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <div 

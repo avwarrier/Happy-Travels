@@ -128,7 +128,7 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
       .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`))
       .append('text')
         .attr('x', width / 2).attr('y', margin.bottom - 10)
-        .attr('fill', '#000').style('text-anchor', 'middle')
+        .attr('fill', '#191919').style('text-anchor', 'middle')
         .text('Percentage of Superhost Listings');
         
     // Y-axis (City Names)
@@ -140,7 +140,7 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
       .attr('y1', 0)
       .attr('x2', x(overallAverage))
       .attr('y2', chartHeight)
-      .attr('stroke', '#cccccc')
+      .attr('stroke', '#555555')
       .attr('stroke-width', 1.5)
       .attr('stroke-dasharray', '4,4');
     svg.append('text')
@@ -148,7 +148,7 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
         .attr('y', -5)
         .attr('text-anchor', 'start')
         .style('font-size', '10px')
-        .style('fill', '#555555')
+        .style('fill', '#191919')
         .text(`Avg: ${overallAverage.toFixed(0)}%`);
 
     // Dots
@@ -160,11 +160,10 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
         .attr('cy', d => y(d.city) + y.bandwidth() / 2)
         .attr('r', 6)
         .attr('fill', d => {
-          if (userSuperhostPreference === 'superhost_only') {
-            return d.superhostPercent >= overallAverage ? '#1E88E5' : '#90CAF9'; // Brighter blue for above/at avg, lighter for below
-          } else {
-            return '#1f77b4'; // Standard blue
-          }
+          const percent = d.superhostPercent;
+          if (percent <= 33) return '#FF8DA0'; // Lightest Airbnb red/pink
+          if (percent <= 66) return '#E51D51'; // Primary Airbnb red
+          return '#D90865'; // Darker Airbnb red
         });
 
     // Value Labels for Dots
@@ -177,10 +176,10 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
         .attr('dy', '.35em')
         .attr('text-anchor', 'start')
         .style('font-size', '10px')
-        .style('fill', '#333')
+        .style('fill', '#191919')
         .text(d => `${d.superhostPercent.toFixed(0)}%`);
 
-  }, [loading, error, citySuperhostData, userSuperhostPreference, overallAverage]);
+  }, [loading, error, citySuperhostData, overallAverage]);
 
   const getInsightText = () => {
     if (loading) return 'Calculating...';
@@ -196,11 +195,11 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">{getInsightText()}</h2>
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">{getInsightText()}</h2>
 
-      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <div 

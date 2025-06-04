@@ -190,9 +190,13 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
           .attr('width', xScale.bandwidth())
           .attr('height', d => chartHeight - yScale(d.percentage))
           .attr('fill', d => {
-            const isSelected = (userSelectedCapacity === d.capacityValue) || (userSelectedCapacity >= 6 && d.capacityValue === 6);
-            return isSelected ? '#E51D51' : '#69b3a2';
+            if (d.capacityValue === userSelectedCapacity) {
+              return '#E51D51';
+            }
+            return '#A9A9A9';
           })
+          .attr('stroke', '#191919')
+          .attr('stroke-width', 0.5)
           .style('opacity', d => {
               const isSelected = (userSelectedCapacity === d.capacityValue) || (userSelectedCapacity >= 6 && d.capacityValue === 6);
               return isSelected ? 1 : 0.7;
@@ -210,7 +214,7 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
 
             sortedCities.forEach(city => {
               const meetsCriteria = city.averageCapacity >= d.capacityValue;
-              tooltipHtml += `<li style="color: ${meetsCriteria ? 'green' : 'black'}; font-weight: ${meetsCriteria ? 'bold' : 'normal'};">
+              tooltipHtml += `<li style="color: ${meetsCriteria ? '#E51D51' : '#191919'}; font-weight: ${meetsCriteria ? 'bold' : 'normal'};">
                                 ${city.city}: avg capacity ${city.averageCapacity.toFixed(1)}
                               </li>`;
             });
@@ -268,11 +272,11 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">{getInsightText()}</h2>
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">{getInsightText()}</h2>
 
-      {loading && <div className="w-full h-[400px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && !loading && <div className="w-full h-[400px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[400px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[400px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <>

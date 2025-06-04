@@ -20,7 +20,7 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
     private_room: 'Private room'
   };
   const CsvRoomTypes = ['Entire home/apt', 'Private room']; 
-  const colors = ['#1f77b4', '#2ca02c']; // Blue for Entire, Green for Private
+  const colors = ['#E51D51', '#FF8DA0']; // Airbnb red for Entire, lighter red for Private
 
   useEffect(() => {
     const fetchData = async () => {
@@ -157,7 +157,7 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
       .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`))
       .append('text')
         .attr('x', width / 2).attr('y', margin.bottom - 10)
-        .attr('fill', '#000').style('text-anchor', 'middle')
+        .attr('fill', '#191919').style('text-anchor', 'middle')
         .text('Proportion of Listings');
 
     // Y-axis
@@ -214,8 +214,9 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
         .attr('y', 0) // y is relative to the cityGroup, which is already positioned by y-scale
         .attr('width', d => x(d.values[1]) - x(d.values[0]))
         .attr('height', y.bandwidth())
-        .attr('fill', d => colorScale(d.key))
-        .attr('opacity', d => roomTypeMapping[userSelectedRoomType] === d.key || !userSelectedRoomType ? 1 : 0.5);
+        .attr('fill', d => colorScale(d.key)) // Use the color scale directly
+        .attr('stroke', '#191919')
+        .attr('stroke-width', 0.5);
 
     // Bar Labels (inside segments)
     cityGroup.selectAll('.bar-label')
@@ -240,8 +241,19 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
         .attr('font-family', 'sans-serif').attr('font-size', 10).attr('text-anchor', 'start')
         .selectAll('g').data(CsvRoomTypes).join('g')
             .attr('transform', (d, i) => `translate(${i * 140}, ${chartHeight + margin.bottom -15})`);
-    legend.append('rect').attr('x', 0).attr('width', 19).attr('height', 19).attr('fill', colorScale);
-    legend.append('text').attr('x', 24).attr('y', 9.5).attr('dy', '0.32em').text(d => d);
+    legend.append('rect')
+        .attr('x', 0)
+        .attr('width', 19)
+        .attr('height', 19)
+        .attr('fill', (d, i) => colors[i])
+        .attr('stroke', '#191919')
+        .attr('stroke-width', 0.5);
+    legend.append('text')
+        .attr('x', 24)
+        .attr('y', 9.5)
+        .attr('dy', '0.32em')
+        .style('fill', '#191919')
+        .text(d => d);
 
   }, [loading, error, cityRoomTypeData, userSelectedRoomType]);
 
@@ -262,10 +274,10 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">{getInsightText()}</h2>
-      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">{getInsightText()}</h2>
+      {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       {!loading && !error && (
         <div ref={d3Container} className="w-full bg-gray-100 rounded-lg shadow" style={{ minHeight: '300px' }}></div>
       )}

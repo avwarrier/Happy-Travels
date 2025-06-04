@@ -139,7 +139,7 @@ const WeekdayWeekendChart = ({ weekday }) => {
         .attr('y1', y(d.weekdayPrice))
         .attr('x2', x('Weekend'))
         .attr('y2', y(d.weekendPrice))
-        .attr('stroke', '#e0e0e0').attr('stroke-width', 1.5);
+        .attr('stroke', '#555555').attr('stroke-width', 1.5);
 
       svg.append('circle')
         .attr('cx', x('Weekday'))
@@ -157,7 +157,7 @@ const WeekdayWeekendChart = ({ weekday }) => {
         .attr('x', x('Weekend') + 10)
         .attr('y', y(d.weekendPrice))
         .attr('dy', '0.35em').attr('text-anchor', 'start')
-        .text(d.city).style('font-size', '9px').style('fill', '#555');
+        .text(d.city).style('font-size', '9px').style('fill', '#191919');
     });
   }, [loading, error, processedChartData, weekday]); // Re-render D3 chart if loading/error state changes, or data changes, or weekday changes (for circle colors)
 
@@ -190,13 +190,13 @@ const WeekdayWeekendChart = ({ weekday }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
         {renderInsightSentence()}
       </h2>
 
-      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <div 

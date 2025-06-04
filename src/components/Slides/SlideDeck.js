@@ -25,7 +25,13 @@ import Link from 'next/link';
 const SlideDeck = () => {
   /* ────────── constants ────────── */
   const totalSlides = 21;                                   // keep in sync
-  const gradient = 'bg-gradient-to-r from-[#E51D51] to-[#D90865]';
+  const gradient = 'airbnb-gradient';
+  
+  // Common styles
+  const questionHeaderClass = "text-[#E51D51] text-lg font-normal mb-4 text-left w-full";
+  const questionTitleClass = "text-[40px] font-normal mb-12 text-left w-full leading-tight";
+  const formGroupClass = "form-group w-full mb-12";
+  const nextButtonClass = `${gradient} px-6 py-1.5 rounded-full text-white text-base font-normal shadow hover:opacity-90 transition-all duration-200 focus:outline-none`;
 
   /* ────────── navigation state ────────── */
   const router = useRouter();
@@ -92,19 +98,18 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-0 body  */}
             <div className="flex flex-row items-center justify-center h-full w-full bg-white p-8">
-              <div className="flex flex-col justify-center w-1/2 h-full pl-8">
+              <div className="flex flex-col justify-center w-1/2 h-full pl-12">
                 <img src="/logo.png" alt="Airbnb Logo" className="w-20 mb-8" />
-                <h1 className="text-5xl font-bold mb-6 leading-tight">
-                  Plan your perfect <br /> European stay
+                <h1 className="text-[60px] font-[500] leading-[1.1] font-normal">
+                  Plan your perfect<br />European stay
                 </h1>
-                <p className="text-lg text-gray-500 mb-8">
+                <p className="text-lg text-gray-500 mt-6 mb-8">
                   We'll ask a few quick questions and show you how your picks compare to other travelers
                 </p>
                 <button
                   onClick={nextSlide}
-                  className="bg-black cursor-pointer text-white px-6 py-2 rounded-full shadow hover:bg-gray-900 transition w-fit"
+                  className={`${gradient} cursor-pointer text-white px-6 py-2 rounded-full shadow hover:opacity-90 transition w-fit`}
                 >
                   Get Started
                 </button>
@@ -126,21 +131,20 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-1 body  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto text-left">
-                <h2 className="text-[#E51D51] text-4xl font-extrabold mb-4">But wait...</h2>
-                <p className="text-base text-gray-600 mb-4">First you need to find a place to stay!</p>
-                <p className="text-base text-gray-600 mb-4">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <h2 className={questionTitleClass}>But wait...</h2>
+                <p className="text-base text-gray-600 mb-6">First you need to find a place to stay!</p>
+                <p className="text-base text-gray-600 mb-6">
                   Lucky for you, <span className="font-semibold">Happy Travels</span> is committed to helping you understand the Airbnb market in Europe. We have a quiz filled with helpful questions and visualizations to help you find the perfect European city to stay in.
                 </p>
                 <p className="text-base text-gray-600 mb-8">So with that said, let's begin!</p>
-                <button
-                  onClick={nextSlide}
-                  className="mt-2 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -156,37 +160,36 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Content from former case 3 (Question 1) */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 1</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 1</span>
+                <h2 className={questionTitleClass}>
                   Is this for a weekday or a weekend?
                 </h2>
-                <div className="flex flex-row gap-4 mb-8">
+                <div className={formGroupClass}>
                   <div className="flex bg-gray-100 rounded-xl p-1 w-[220px]">
                     <div
                       onClick={() => setWeekday(true)}
-                      className={`flex-1 text-center py-2 rounded-lg font-semibold cursor-pointer transition-all duration-200
+                      className={`flex-1 text-center py-3 rounded-lg font-normal cursor-pointer transition-all duration-200
                         ${weekday ? 'bg-white shadow text-black' : 'text-black'}`}
                     >
                       Weekday
                     </div>
                     <div
                       onClick={() => setWeekday(false)}
-                      className={`flex-1 text-center py-2 rounded-lg font-semibold cursor-pointer transition-all duration-200
+                      className={`flex-1 text-center py-3 rounded-lg font-normal cursor-pointer transition-all duration-200
                         ${!weekday ? 'bg-white shadow text-black' : 'text-black'}`}
                     >
                       Weekend
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-2 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -202,17 +205,16 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Content from former case 2 (Visualization) */}
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <WeekdayWeekendChart weekday={weekday} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -229,14 +231,13 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-3 body  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 2</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 2</span>
+                <h2 className={questionTitleClass}>
                   What is your Max nightly<br />budget ($)
                 </h2>
-                <div className="w-full mb-8">
+                <div className={formGroupClass}>
                   <Slider
                     sx={{
                       color: '#191919',
@@ -258,17 +259,17 @@ const SlideDeck = () => {
                     max={650}
                     valueLabelFormat={(v) => `$${v}`}
                   />
-                  <div className="flex justify-between text-gray-400 text-base mt-2">
+                  <div className="flex justify-between text-gray-400 text-base mt-4">
                     <span>$30</span>
                     <span>$800</span>
                   </div>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-2 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -285,15 +286,15 @@ const SlideDeck = () => {
             direction={direction}
           >
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <PriceHistogramChart userMaxPrice={price} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -310,14 +311,13 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-5 body (was slide-4)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 3</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 3</span>
+                <h2 className={questionTitleClass}>
                   Minimum cleanliness score?
                 </h2>
-                <div className="w-full mb-8">
+                <div className={formGroupClass}>
                   <Slider
                     sx={{
                       color: '#191919',
@@ -365,12 +365,12 @@ const SlideDeck = () => {
                     </Select>
                   </FormControl>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-6 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -387,15 +387,15 @@ const SlideDeck = () => {
             direction={direction}
           >
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <CityCleanlinessBarChart userMinCleanliness={cleanlinessValue} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -412,14 +412,13 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-7 body (was slide-6)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 4</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 4</span>
+                <h2 className={questionTitleClass}>
                   Max walk to nearest<br />metro (km)
                 </h2>
-                <div className="w-full mb-8">
+                <div className={formGroupClass}>
                   <Slider
                     sx={{
                       color: '#191919',
@@ -468,12 +467,12 @@ const SlideDeck = () => {
                     </Select>
                   </FormControl>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-6 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -489,17 +488,16 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Visualization for Max walk to nearest metro */}
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <MetroDistanceCDFChart userMetroDistance={metroDistance} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -516,14 +514,13 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-9 body (was slide-8)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 5</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 5</span>
+                <h2 className={questionTitleClass}>
                   Max distance to city<br />centre (km)
                 </h2>
-                <div className="w-full mb-8">
+                <div className={formGroupClass}>
                   <Slider
                     sx={{
                       color: '#191919',
@@ -571,10 +568,7 @@ const SlideDeck = () => {
                     </Select>
                   </FormControl>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-6 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
+                <button onClick={nextSlide} className={nextButtonClass}>
                   Next
                 </button>
               </div>
@@ -592,17 +586,16 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Visualization for Max distance to city centre */}
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <CityCenterDistanceDotPlot userMaxDistance={distance} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -619,14 +612,13 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-11 body (was slide-10)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 6</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 6</span>
+                <h2 className={questionTitleClass}>
                   Minimum guest satisfaction score?
                 </h2>
-                <div className="w-full mb-8">
+                <div className={formGroupClass}>
                   <Slider
                     sx={{
                       color: '#191919',
@@ -674,10 +666,7 @@ const SlideDeck = () => {
                     </Select>
                   </FormControl>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-6 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
+                <button onClick={nextSlide} className={nextButtonClass}>
                   Next
                 </button>
               </div>
@@ -695,17 +684,16 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Visualization for Guest Satisfaction Score */}
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <CitySatisfactionChart userMinSatisfaction={satisfactionScore} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -722,11 +710,10 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-13 body (was slide-12)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 7</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 7</span>
+                <h2 className={questionTitleClass}>
                   Preferred room type?
                 </h2>
                 <div className="max-w-xs w-full mb-8">
@@ -768,10 +755,7 @@ const SlideDeck = () => {
                     </Select>
                   </FormControl>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-6 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
+                <button onClick={nextSlide} className={nextButtonClass}>
                   Next
                 </button>
               </div>
@@ -789,17 +773,16 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Visualization for Room Type */}
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <RoomTypeBreakdownChart userSelectedRoomType={roomType} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -816,11 +799,10 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-15 body (was slide-14)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 8</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 8</span>
+                <h2 className={questionTitleClass}>
                   Superhost status preference?
                 </h2>
                 <p className="text-base text-gray-600 mb-8 text-left w-full">
@@ -865,10 +847,7 @@ const SlideDeck = () => {
                     </Select>
                   </FormControl>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-6 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
+                <button onClick={nextSlide} className={nextButtonClass}>
                   Next
                 </button>
               </div>
@@ -886,17 +865,16 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Visualization for Superhost Preference */}
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <SuperhostDistributionChart userSuperhostPreference={superhostPreference} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -913,11 +891,10 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-17 body (was slide-16)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
-                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 9</span>
-                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
+                <span className={questionHeaderClass}>Question 9</span>
+                <h2 className={questionTitleClass}>
                   Preferred person capacity?
                 </h2>
                 <p className="text-base text-gray-600 mb-8 text-left w-full">
@@ -964,10 +941,7 @@ const SlideDeck = () => {
                     </Select>
                   </FormControl>
                 </div>
-                <button
-                  onClick={nextSlide}
-                  className="mt-6 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                >
+                <button onClick={nextSlide} className={nextButtonClass}>
                   Next
                 </button>
               </div>
@@ -985,17 +959,16 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/* Visualization for Person Capacity */}
             <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-2xl p-4">
+              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
                 <PersonCapacityChart userSelectedCapacity={personCapacity} />
-                <div className="flex justify-end w-full mt-4">
-                  <button
-                    onClick={nextSlide}
-                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
-                  >
-                    Next
-                  </button>
+                <div className="flex justify-start w-full mt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button onClick={nextSlide} className={nextButtonClass}>
+                      Next
+                    </button>
+                    <span className="text-sm text-gray-400">Press enter</span>
+                  </div>
                 </div>
               </div>
             </div>

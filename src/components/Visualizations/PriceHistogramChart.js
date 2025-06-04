@@ -131,7 +131,18 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
         .attr('y', d => y(d.medianPrice))
         .attr('width', x.bandwidth())
         .attr('height', d => height - y(d.medianPrice))
-        .attr('fill', d => d.medianPrice <= userMaxPrice ? '#4CAF50' : '#cccccc');
+        .attr('fill', d => {
+          if (d.medianPrice <= userMaxPrice) {
+            // Create gradient based on price relative to userMaxPrice
+            const ratio = d.medianPrice / userMaxPrice;
+            if (ratio <= 0.33) return '#FF8DA0'; // Lightest red for lowest prices
+            if (ratio <= 0.66) return '#E51D51'; // Medium red for middle prices
+            return '#D90865'; // Darker red for higher prices (but still under max)
+          }
+          return '#A9A9A9'; // Grey for prices above userMaxPrice
+        })
+        .attr('stroke', '#191919')
+        .attr('stroke-width', 0.5);
 
     // Horizontal cutoff line for userMaxPrice
     if (userMaxPrice !== null && userMaxPrice !== undefined && y(userMaxPrice) >=0 && y(userMaxPrice) <= height) {
@@ -140,7 +151,7 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
         .attr('y1', y(userMaxPrice))
         .attr('x2', width)
         .attr('y2', y(userMaxPrice))
-        .attr('stroke', '#FF8C00')
+        .attr('stroke', '#555555')
         .attr('stroke-width', 2)
         .attr('stroke-dasharray', '4');
     }
@@ -149,16 +160,16 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
-      <p className="text-sm font-semibold mb-1" style={{ color: '#E51D51' }}>Insight</p>
-      <h2 className="text-3xl font-bold text-black mb-6">
+      <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
+      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
         {loading ? 'Calculating...' : error ? ' ' : 
           (parseInt(shareOfCities) >= 50 ? `About ${shareOfCities}%` : `Only ${shareOfCities}%`) + 
           ` of cities have a median ≤ €${userMaxPrice}.
         `}
       </h2>
 
-      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p>Loading visualization...</p></div>}
-      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-red-500 p-4 text-center">{error}</p></div>}
+      {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
+      {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       
       {!loading && !error && (
         <div 
