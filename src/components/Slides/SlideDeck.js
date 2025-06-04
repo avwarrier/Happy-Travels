@@ -76,7 +76,6 @@ const SlideDeck = () => {
 
   /* ────────── handler helpers ────────── */
   const handleCleanlinessChange = (e, v) => setCleanlinessValue(v);
-  const handleDistanceChange = (e, v) => setDistance(v);
   const handleMetroDistanceChange = (e, v) => setMetroDistance(v);
   const handleSatisfactionChange = (e, v) => setSatisfactionScore(v);
 
@@ -516,104 +515,6 @@ const SlideDeck = () => {
           >
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
-                <span className={questionHeaderClass}>Question 5</span>
-                <h2 className={questionTitleClass}>
-                  Max distance to city<br />centre (km)
-                </h2>
-                <div className={formGroupClass}>
-                  <Slider
-                    sx={{
-                      color: '#191919',
-                      height: 6,
-                      '& .MuiSlider-thumb': {
-                        width: 24,
-                        height: 24,
-                        backgroundColor: '#fff',
-                        border: '2px solid #191919',
-                      },
-                      '& .MuiSlider-rail': { backgroundColor: '#f3f3f3', height: 6 },
-                      '& .MuiSlider-track': { backgroundColor: '#191919', height: 6 },
-                    }}
-                    getAriaLabel={() => 'Distance range'}
-                    value={distance}
-                    onChange={handleDistanceChange}
-                    valueLabelDisplay="auto"
-                    min={0}
-                    max={25.28}
-                    valueLabelFormat={(v) => `${v} km`}
-                  />
-                  <div className="flex justify-between text-gray-500 text-sm mt-2">
-                    <span>0 km</span>
-                    <span>25 km</span>
-                  </div>
-                </div>
-                <div className="max-w-xs w-full mb-8">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">How important is distance to city centre to you?</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Value</InputLabel>
-                    <Select
-                      value={importance.distance}
-                      label="Select Value"
-                      onChange={(e) => setImportance({ ...importance, distance: e.target.value })}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                      }}
-                    >
-                      <MenuItem value={5}>5 - Very Important</MenuItem>
-                      <MenuItem value={4}>4 - Pretty Important</MenuItem>
-                      <MenuItem value={3}>3 - Somewhat Important</MenuItem>
-                      <MenuItem value={2}>2 - Not Important</MenuItem>
-                      <MenuItem value={1}>1 - Don't Care</MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-                <button onClick={nextSlide} className={nextButtonClass}>
-                  Next
-                </button>
-              </div>
-            </div>
-          </Slide>
-        );
-
-      /* ────────────────────────────────── 11 ────────────────────────────────── */
-      case 11:
-        return (
-          <Slide
-            key={currentSlide}
-            motionKey={currentSlide}
-            next={nextSlide}
-            prev={prevSlide}
-            direction={direction}
-          >
-            <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
-                <CityCenterDistanceDotPlot userMaxDistance={distance} />
-                <div className="flex justify-start w-full mt-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button onClick={nextSlide} className={nextButtonClass}>
-                      Next
-                    </button>
-                    <span className="text-sm text-gray-400">Press enter</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Slide>
-        );
-
-      /* ────────────────────────────────── 12 ────────────────────────────────── */
-      case 12:
-        return (
-          <Slide
-            key={currentSlide}
-            motionKey={currentSlide}
-            next={nextSlide}
-            prev={prevSlide}
-            direction={direction}
-          >
-            <div className="flex flex-col items-center justify-center h-full w-full p-0">
-              <div className="flex flex-col items-start justify-center w-full max-w-3xl mx-auto px-4">
                 <span className={questionHeaderClass}>Question 6</span>
                 <h2 className={questionTitleClass}>
                   Minimum guest satisfaction score?
@@ -674,8 +575,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 13 ────────────────────────────────── */
-      case 13:
+      /* ────────────────────────────────── 11 ────────────────────────────────── */
+      case 11:
         return (
           <Slide
             key={currentSlide}
@@ -700,8 +601,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 14 ────────────────────────────────── */
-      case 14:
+      /* ────────────────────────────────── 12 ────────────────────────────────── */
+      case 12:
         return (
           <Slide
             key={currentSlide}
@@ -763,8 +664,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 15 ────────────────────────────────── */
-      case 15:
+      /* ────────────────────────────────── 13 ────────────────────────────────── */
+      case 13:
         return (
           <Slide
             key={currentSlide}
@@ -789,8 +690,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 16 ────────────────────────────────── */
-      case 16:
+      /* ────────────────────────────────── 14 ────────────────────────────────── */
+      case 14:
         return (
           <Slide
             key={currentSlide}
@@ -855,8 +756,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 17 ────────────────────────────────── */
-      case 17:
+      /* ────────────────────────────────── 15 ────────────────────────────────── */
+      case 15:
         return (
           <Slide
             key={currentSlide}
@@ -881,8 +782,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 18 ────────────────────────────────── */
-      case 18:
+      /* ────────────────────────────────── 16 ────────────────────────────────── */
+      case 16:
         return (
           <Slide
             key={currentSlide}
@@ -949,8 +850,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 19 ────────────────────────────────── */
-      case 19:
+      /* ────────────────────────────────── 17 ────────────────────────────────── */
+      case 17:
         return (
           <Slide
             key={currentSlide}
@@ -975,8 +876,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 20 (final slide) ────────────────────────────────── */
-      case 20:
+      /* ────────────────────────────────── 18 (final slide) ────────────────────────────────── */
+      case 18:
         return (
           <Slide
             key={currentSlide}
@@ -996,7 +897,7 @@ const SlideDeck = () => {
                     const queryObj = {
                       weekday:           JSON.stringify(weekday),
                       price:        JSON.stringify(price),
-                      distance:          JSON.stringify(distance),
+                      distance:          JSON.stringify(metroDistance),
                       personCapacity:    JSON.stringify(personCapacity),
                       cleanlinessValue:  String(cleanlinessValue),
                       satisfactionScore: String(satisfactionScore),
