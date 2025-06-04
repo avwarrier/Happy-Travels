@@ -10,6 +10,8 @@ import { MetricGaugeChart } from '@/components/Map/D3MetricGaugeChart';
 import { AverageCost } from '@/components/Map/AverageCost';
 import { AverageCapacity } from '@/components/Map/AvgCapacity';
 import { AverageBedrooms } from '@/components/Map/AvgBedrooms';
+import { AvgDistFromMetro } from '@/components/Map/DistFromMetro';
+import { AvgDistFromCityCenter } from '@/components/Map/DistFromCityCenter';
 
 const EuropeMapLeafletWithNoSSR = dynamic(
   () => import('../../components/Map/Map'),
@@ -123,8 +125,15 @@ const handleCityClick = async (city) => {
                           <AverageBedrooms avgRooms={cityDataDetails.bedroomCapacity}/>
                         </div>
                       </div>
-
                     </div>
+
+                    <div className='border border-gray-200 my-4'/>
+
+                      <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Distance From</h2>
+                      <div className='flex justify-between'>
+                        <AvgDistFromMetro distance={cityDataDetails.metroDist}/>
+                        <AvgDistFromCityCenter distance={cityDataDetails.cityCenterDist}/>
+                      </div>
 
                   </div>
                 ) : (

@@ -54,6 +54,8 @@ export async function GET(request, { params }) {
     const avgGuestSatisfaction = average(combinedData, 'guest_satisfaction_overall');
     const avgPersonCapacity = average(combinedData, 'person_capacity');
     const avgBedroomCapacity = average(combinedData, 'bedrooms');
+    const avgDistanceFromMetroStation = average(combinedData, 'metro_dist');
+    const avgDistanceFromCityCenter = average(combinedData, 'dist');
 
     // --- TODO: AGGREGATE AND PROCESS THE DATA HERE ---
     const aggregatedData = {
@@ -72,6 +74,8 @@ export async function GET(request, { params }) {
     guestSatisfaction: avgGuestSatisfaction,
     personCapacity: avgPersonCapacity,
     bedroomCapacity: avgBedroomCapacity,
+    metroDist: avgDistanceFromMetroStation,
+    cityCenterDist: avgDistanceFromCityCenter,
     };
 
     // ---------------------------------------------------------
