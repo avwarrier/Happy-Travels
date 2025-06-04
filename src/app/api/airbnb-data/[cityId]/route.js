@@ -51,6 +51,9 @@ export async function GET(request, { params }) {
     const avgTotalCityCost = average(combinedData, 'realSum');
     const avgWeekdayCost = average(weekdayData, 'realSum');
     const avgWeekendCost = average(weekendData, 'realSum');
+    const avgGuestSatisfaction = average(combinedData, 'guest_satisfaction_overall');
+    const avgPersonCapacity = average(combinedData, 'person_capacity');
+    const avgBedroomCapacity = average(combinedData, 'bedrooms');
 
     // --- TODO: AGGREGATE AND PROCESS THE DATA HERE ---
     const aggregatedData = {
@@ -66,6 +69,9 @@ export async function GET(request, { params }) {
       avgWeekdayCost: avgWeekdayCost,
       avgWeekendCost: avgWeekendCost,
     },
+    guestSatisfaction: avgGuestSatisfaction,
+    personCapacity: avgPersonCapacity,
+    bedroomCapacity: avgBedroomCapacity,
     };
 
     // ---------------------------------------------------------

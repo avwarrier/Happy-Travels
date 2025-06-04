@@ -8,6 +8,8 @@ import { europeanCities } from '@/components/Map/cityCoords';
 import { DataExaminedBarChart } from '@/components/Map/D3DataExaminedBarChart';
 import { MetricGaugeChart } from '@/components/Map/D3MetricGaugeChart';
 import { AverageCost } from '@/components/Map/AverageCost';
+import { AverageCapacity } from '@/components/Map/AvgCapacity';
+import { AverageBedrooms } from '@/components/Map/AvgBedrooms';
 
 const EuropeMapLeafletWithNoSSR = dynamic(
   () => import('../../components/Map/Map'),
@@ -111,12 +113,15 @@ const handleCityClick = async (city) => {
                       <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Metrics</h2>
                       <div className='flex w-full justify-between items-center'>
                         <AverageCost avgCost={cityDataDetails.avgCost.avgTotalCityCost} weekdayAvgCost={cityDataDetails.avgCost.avgWeekdayCost} weekendAvgCost={cityDataDetails.avgCost.avgWeekendCost}/>
-                        <MetricGaugeChart value={cityDataDetails.avgCleanliness?.combined?.toFixed(2)} label={"Cleanliness"}/>
+                        <MetricGaugeChart value={cityDataDetails.avgCleanliness.combined?.toFixed(2)} label={"Cleanliness"}/>
                       </div>
 
                       <div className='flex w-full justify-between items-center my-4'>
-                        {/* Guest satisfaction here */}
-                        {/* Avg person capacity here */}
+                        <MetricGaugeChart value={cityDataDetails.guestSatisfaction.toFixed(2)} label={"Guest Satisfaction"} maxValue={100} displayMode='percentage' color='#2196f3' />
+                        <div className='flex flex-col gap-4'>
+                          <AverageCapacity avgCapacity={cityDataDetails.personCapacity}/>
+                          <AverageBedrooms avgRooms={cityDataDetails.bedroomCapacity}/>
+                        </div>
                       </div>
 
                     </div>
