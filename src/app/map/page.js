@@ -86,10 +86,10 @@ const handleCityClick = async (city) => {
           </div>
 
           {/* Data Display Panel */}
-          <aside className="lg:w-1/3 xl:w-1/4 bg-white p-5 rounded-xl shadow-2xl lg:max-h-[700px] overflow-y-auto">
+          <aside className="lg:w-1/3 xl:w-1/4 bg-white p-5 rounded-xl shadow-2xl lg:max-h-[700px] overflow-y-auto text-gray-900">
             {selectedCity ? (
               <>
-                <h2 className="text-2xl font-semibold text-blue-700 mb-3 border-b-2 pb-2 border-blue-200 text-center">
+                <h2 className="text-xl font-semibold mb-5">
                   {`${selectedCity.name}, ${selectedCity.country}`}
                 </h2>
                 {isLoadingDetails ? (
@@ -98,13 +98,30 @@ const handleCityClick = async (city) => {
                     <div className="mt-3 w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                   </div>
                 ) : cityDataDetails ? (
-                  <div className="space-y-4 text-sm">
+                  <div className=" text-sm">
+
                     <div>
-                      <p><strong className="text-gray-700">Data examined</strong></p>
-                      <p>{cityDataDetails.placeholderData || cityDataDetails.dataSummary} </p>
+                      <h2 className="text-gray-500 font-semibold text-lg">Data Examined</h2>
+                      <div className='flex justify-between w-full my-2'>
+                        <div>
+                          <h4 className='font-semibold'>Weekday rows:</h4>
+                          <p className='text-gray-500'>{cityDataDetails.weekdayRows}</p>
+                        </div>
+                        <div>
+                          <h4 className='font-semibold'>Weekend rows:</h4>
+                          <p className='text-gray-500'>{cityDataDetails.weekendRows}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className='font-semibold'>Total listings</h4>
+                        <p className='text-gray-500'>{cityDataDetails.weekendRows + cityDataDetails.weekdayRows}</p>
+                      </div>
                     </div>
+
+                    <div className='border border-gray-200 my-4'/>
+
                     <div>
-                      <strong className="text-gray-700">Average Cleanliness:</strong>
+                      <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Metrics</h2>
                       <ul className="list-disc list-inside ml-4">
                         <li>Weekday: {cityDataDetails.avgCleanliness?.weekday?.toFixed(2) ?? 'N/A'}</li>
                         <li>Weekend: {cityDataDetails.avgCleanliness?.weekend?.toFixed(2) ?? 'N/A'}</li>

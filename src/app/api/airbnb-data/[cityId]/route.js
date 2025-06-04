@@ -60,7 +60,8 @@ export async function GET(request, { params }) {
         weekend: avgWeekendCleanliness,
         combined: avgCombinedCleanliness,
     },
-    dataSummary: `Weekday rows: ${weekdayData.length}, Weekend rows: ${weekendData.length}`,
+    weekdayRows: weekdayData.length,
+    weekendRows: weekendData.length
     };
 
     // ---------------------------------------------------------
