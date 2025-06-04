@@ -42,9 +42,6 @@ export async function GET(request, { params }) {
     return validValues.length ? sum / validValues.length : null;
     };
 
-    // ---------------------------------------------------------
-    // Right now I am calculating cleanliness, should calculate all valiuable fields and display them
-    // then add d3 visuals to them
     const combinedData = [...weekdayData, ...weekendData];
     const avgCombinedCleanliness = average(combinedData, 'cleanliness_rating');
 
@@ -57,7 +54,21 @@ export async function GET(request, { params }) {
     const avgDistanceFromMetroStation = average(combinedData, 'metro_dist');
     const avgDistanceFromCityCenter = average(combinedData, 'dist');
 
-    // --- TODO: AGGREGATE AND PROCESS THE DATA HERE ---
+    // --- Room Type Distribution Calculations ---
+    const roomTypeCounts = combinedData.reduce((acc, listing) => {
+      const type = listing.room_type; // Get the room type from the current listing
+      if (type) {
+        acc[type] = (acc[type] || 0) + 1; // Increment count for this type, or initialize to 1
+      }
+      return acc;
+    }, {});
+
+    // Convert counts object into array of {label, value} objects for the donut chart
+    const roomTypeDistributionData = Object.keys(roomTypeCounts).map(type => ({
+      label: type, // Room type string
+      value: roomTypeCounts[type] // Room type count
+    }));
+
     const aggregatedData = {
     city: cityId,
     processed: true,
@@ -76,6 +87,7 @@ export async function GET(request, { params }) {
     bedroomCapacity: avgBedroomCapacity,
     metroDist: avgDistanceFromMetroStation,
     cityCenterDist: avgDistanceFromCityCenter,
+    roomTypeDistribution: roomTypeDistributionData,
     };
 
     // ---------------------------------------------------------
