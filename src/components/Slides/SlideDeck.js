@@ -6,6 +6,11 @@ import WeekdayWeekendChart from '../Visualizations/WeekdayWeekendChart';
 import PriceHistogramChart from '../Visualizations/PriceHistogramChart';
 import CityCleanlinessBarChart from '../Visualizations/CityCleanlinessBarChart';
 import MetroDistanceCDFChart from '../Visualizations/MetroDistanceCDFChart';
+import CityCenterDistanceDotPlot from '../Visualizations/CityCenterDistanceDotPlot';
+import CitySatisfactionChart from '../Visualizations/CitySatisfactionChart';
+import RoomTypeBreakdownChart from '../Visualizations/RoomTypeBreakdownChart';
+import SuperhostDistributionChart from '../Visualizations/SuperhostDistributionChart';
+import PersonCapacityChart from '../Visualizations/PersonCapacityChart';
 
 import Slider from '@mui/material/Slider';
 import InputLabel from '@mui/material/InputLabel';
@@ -587,8 +592,19 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Distance</p>
+            {/* Visualization for Max distance to city centre */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <CityCenterDistanceDotPlot userMaxDistance={distance} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </Slide>
         );
@@ -679,8 +695,19 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Guest Satisfaction Score</p>
+            {/* Visualization for Guest Satisfaction Score */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <CitySatisfactionChart userMinSatisfaction={satisfactionScore} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </Slide>
         );
@@ -762,8 +789,19 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Room Type</p>
+            {/* Visualization for Room Type */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <RoomTypeBreakdownChart userSelectedRoomType={roomType} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </Slide>
         );
@@ -848,8 +886,19 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Superhost</p>
+            {/* Visualization for Superhost Preference */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <SuperhostDistributionChart userSuperhostPreference={superhostPreference} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </Slide>
         );
@@ -936,8 +985,19 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Person Capacity</p>
+            {/* Visualization for Person Capacity */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <PersonCapacityChart userSelectedCapacity={personCapacity} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </Slide>
         );
