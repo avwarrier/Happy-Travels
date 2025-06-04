@@ -2,6 +2,10 @@
 import React, { useState } from 'react';
 import Slide from './Slide';
 import ProgressBar from '../ProgressBar';
+import WeekdayWeekendChart from '../Visualizations/WeekdayWeekendChart';
+import PriceHistogramChart from '../Visualizations/PriceHistogramChart';
+import CityCleanlinessBarChart from '../Visualizations/CityCleanlinessBarChart';
+import MetroDistanceCDFChart from '../Visualizations/MetroDistanceCDFChart';
 
 import Slider from '@mui/material/Slider';
 import InputLabel from '@mui/material/InputLabel';
@@ -15,7 +19,7 @@ import Link from 'next/link';
 
 const SlideDeck = () => {
   /* ────────── constants ────────── */
-  const totalSlides = 20;                                   // keep in sync
+  const totalSlides = 21;                                   // keep in sync
   const gradient = 'bg-gradient-to-r from-[#E51D51] to-[#D90865]';
 
   /* ────────── navigation state ────────── */
@@ -137,7 +141,7 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 2 ────────────────────────────────── */
+      /* ────────────────────────────────── 2 (Was Question 1 - Weekday/Weekend) ────────────────────────────────── */
       case 2:
         return (
           <Slide
@@ -147,23 +151,7 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Weekday/Weekend</p>
-            </div>
-          </Slide>
-        );
-
-      /* ────────────────────────────────── 3 ────────────────────────────────── */
-      case 3:
-        return (
-          <Slide
-            key={currentSlide}
-            motionKey={currentSlide}
-            next={nextSlide}
-            prev={prevSlide}
-            direction={direction}
-          >
-            {/*  existing slide-3 body  */}
+            {/* Content from former case 3 (Question 1) */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 1</span>
@@ -199,6 +187,33 @@ const SlideDeck = () => {
           </Slide>
         );
 
+      /* ────────────────────────────────── 3 (Was WeekdayWeekendChart Visualization) ────────────────────────────────── */
+      case 3:
+        return (
+          <Slide
+            key={currentSlide}
+            motionKey={currentSlide}
+            next={nextSlide}
+            prev={prevSlide}
+            direction={direction}
+          >
+            {/* Content from former case 2 (Visualization) */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <WeekdayWeekendChart weekday={weekday} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Slide>
+        );
+
       /* ────────────────────────────────── 4 ────────────────────────────────── */
       case 4:
         return (
@@ -209,9 +224,47 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-4 body  */}
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Price</p>
+            {/*  existing slide-3 body  */}
+            <div className="flex flex-col items-center justify-center h-full w-full p-0">
+              <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
+                <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 2</span>
+                <h2 className="text-4xl font-extrabold mb-4 text-left w-full">
+                  What is your Max nightly<br />budget ($)
+                </h2>
+                <div className="w-full mb-8">
+                  <Slider
+                    sx={{
+                      color: '#191919',
+                      height: 6,
+                      '& .MuiSlider-thumb': {
+                        width: 24,
+                        height: 24,
+                        backgroundColor: '#fff',
+                        border: '2px solid #191919',
+                      },
+                      '& .MuiSlider-rail': { backgroundColor: '#f3f3f3', height: 6 },
+                      '& .MuiSlider-track': { backgroundColor: '#191919', height: 6 },
+                    }}
+                    getAriaLabel={() => 'Price range'}
+                    value={price}
+                    onChange={(e, v) => setPrice(v)}
+                    valueLabelDisplay="auto"
+                    min={20}
+                    max={650}
+                    valueLabelFormat={(v) => `$${v}`}
+                  />
+                  <div className="flex justify-between text-gray-400 text-base mt-2">
+                    <span>$30</span>
+                    <span>$800</span>
+                  </div>
+                </div>
+                <button
+                  onClick={nextSlide}
+                  className="mt-2 px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </Slide>
         );
@@ -226,7 +279,33 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-5 body  */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <PriceHistogramChart userMaxPrice={price} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Slide>
+        );
+
+      /* ────────────────────────────────── 6 ────────────────────────────────── */
+      case 6:
+        return (
+          <Slide
+            key={currentSlide}
+            motionKey={currentSlide}
+            next={nextSlide}
+            prev={prevSlide}
+            direction={direction}
+          >
+            {/*  existing slide-5 body (was slide-4)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 3</span>
@@ -292,22 +371,6 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 6 ────────────────────────────────── */
-      case 6:
-        return (
-          <Slide
-            key={currentSlide}
-            motionKey={currentSlide}
-            next={nextSlide}
-            prev={prevSlide}
-            direction={direction}
-          >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for cleanliness score</p>
-            </div>
-          </Slide>
-        );
-
       /* ────────────────────────────────── 7 ────────────────────────────────── */
       case 7:
         return (
@@ -318,7 +381,33 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-7 body  */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <CityCleanlinessBarChart userMinCleanliness={cleanlinessValue} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Slide>
+        );
+
+      /* ────────────────────────────────── 8 ────────────────────────────────── */
+      case 8:
+        return (
+          <Slide
+            key={currentSlide}
+            motionKey={currentSlide}
+            next={nextSlide}
+            prev={prevSlide}
+            direction={direction}
+          >
+            {/*  existing slide-7 body (was slide-6)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 4</span>
@@ -385,22 +474,6 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 8 ────────────────────────────────── */
-      case 8:
-        return (
-          <Slide
-            key={currentSlide}
-            motionKey={currentSlide}
-            next={nextSlide}
-            prev={prevSlide}
-            direction={direction}
-          >
-            <div className="flex flex-col items-center h-full w-full p-[30px]">
-              <p className="text-2xl font-bold">Visualization for Max walk to nearest metro (km)</p>
-            </div>
-          </Slide>
-        );
-
       /* ────────────────────────────────── 9 ────────────────────────────────── */
       case 9:
         return (
@@ -411,7 +484,34 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-9 body  */}
+            {/* Visualization for Max walk to nearest metro */}
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-2xl p-4">
+                <MetroDistanceCDFChart userMetroDistance={metroDistance} />
+                <div className="flex justify-end w-full mt-4">
+                  <button
+                    onClick={nextSlide}
+                    className="px-8 py-2 rounded-full bg-[#E51D51] text-white text-lg font-semibold shadow hover:bg-[#D90865] transition-all duration-200 focus:outline-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Slide>
+        );
+
+      /* ────────────────────────────────── 10 ────────────────────────────────── */
+      case 10:
+        return (
+          <Slide
+            key={currentSlide}
+            motionKey={currentSlide}
+            next={nextSlide}
+            prev={prevSlide}
+            direction={direction}
+          >
+            {/*  existing slide-9 body (was slide-8)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 5</span>
@@ -477,8 +577,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 10 ────────────────────────────────── */
-      case 10:
+      /* ────────────────────────────────── 11 ────────────────────────────────── */
+      case 11:
         return (
           <Slide
             key={currentSlide}
@@ -493,8 +593,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 11 ────────────────────────────────── */
-      case 11:
+      /* ────────────────────────────────── 12 ────────────────────────────────── */
+      case 12:
         return (
           <Slide
             key={currentSlide}
@@ -503,7 +603,7 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-11 body  */}
+            {/*  existing slide-11 body (was slide-10)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 6</span>
@@ -569,8 +669,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 12 ────────────────────────────────── */
-      case 12:
+      /* ────────────────────────────────── 13 ────────────────────────────────── */
+      case 13:
         return (
           <Slide
             key={currentSlide}
@@ -585,8 +685,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 13 ────────────────────────────────── */
-      case 13:
+      /* ────────────────────────────────── 14 ────────────────────────────────── */
+      case 14:
         return (
           <Slide
             key={currentSlide}
@@ -595,7 +695,7 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-13 body  */}
+            {/*  existing slide-13 body (was slide-12)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 7</span>
@@ -652,8 +752,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 14 ────────────────────────────────── */
-      case 14:
+      /* ────────────────────────────────── 15 ────────────────────────────────── */
+      case 15:
         return (
           <Slide
             key={currentSlide}
@@ -668,8 +768,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 15 ────────────────────────────────── */
-      case 15:
+      /* ────────────────────────────────── 16 ────────────────────────────────── */
+      case 16:
         return (
           <Slide
             key={currentSlide}
@@ -678,7 +778,7 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-15 body  */}
+            {/*  existing slide-15 body (was slide-14)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 8</span>
@@ -738,8 +838,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 16 ────────────────────────────────── */
-      case 16:
+      /* ────────────────────────────────── 17 ────────────────────────────────── */
+      case 17:
         return (
           <Slide
             key={currentSlide}
@@ -754,8 +854,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 17 ────────────────────────────────── */
-      case 17:
+      /* ────────────────────────────────── 18 ────────────────────────────────── */
+      case 18:
         return (
           <Slide
             key={currentSlide}
@@ -764,7 +864,7 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            {/*  existing slide-17 body  */}
+            {/*  existing slide-17 body (was slide-16)  */}
             <div className="flex flex-col items-center justify-center h-full w-full p-0">
               <div className="flex flex-col items-start justify-center w-full max-w-xl mx-auto">
                 <span className="text-[#E51D51] text-lg font-semibold mb-2 text-left w-full">Question 9</span>
@@ -826,8 +926,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 18 ────────────────────────────────── */
-      case 18:
+      /* ────────────────────────────────── 19 ────────────────────────────────── */
+      case 19:
         return (
           <Slide
             key={currentSlide}
@@ -842,8 +942,8 @@ const SlideDeck = () => {
           </Slide>
         );
 
-      /* ────────────────────────────────── 19 (final slide) ────────────────────────────────── */
-      case 19:
+      /* ────────────────────────────────── 20 (final slide) ────────────────────────────────── */
+      case 20:
         return (
           <Slide
             key={currentSlide}
