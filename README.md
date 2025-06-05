@@ -1,4 +1,5 @@
 # Happy-Travels: European Airbnb Data Visualization
+<img width="1552" alt="Screenshot 2025-06-05 at 4 26 35 PM" src="https://github.com/user-attachments/assets/d3fe41b3-c122-48bf-a7ec-fdf653644daf" />
 
 Team 20 - Abhimanyu Warrier, Hussain Ali, Raymond Wong, Rani Saro, Mohnish Gopi
 
