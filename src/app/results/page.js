@@ -56,11 +56,14 @@ const page = () => {
         <Link href="/">
           <span className="text-black text-sm font-normal cursor-pointer hover:underline">Start over</span>
         </Link>
-        <Link href={{ pathname: "/map", query: topCities.length >= 3 ? {
-          top1: topCities[0]?.city,
-          top2: topCities[1]?.city,
-          top3: topCities[2]?.city,
-        } : {} }}>
+        <Link href={{
+                pathname: "/map",
+                query: {
+                ...Object.fromEntries(searchParams.entries()),
+                top1: topCities[0]?.city,
+                top2: topCities[1]?.city,
+                top3: topCities[2]?.city,
+                }}}>
           <button className="bg-[#E51D51] hover:bg-[#c21844] text-white px-5 py-2 rounded-full text-sm font-medium shadow transition-all duration-200 focus:outline-none">View Map</button>
         </Link>
       </div>
