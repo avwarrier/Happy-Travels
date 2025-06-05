@@ -44,13 +44,12 @@ export async function GET(request, { params }) {
 
     const combinedData = [...weekdayData, ...weekendData];
     const avgCombinedCleanliness = average(combinedData, 'cleanliness_rating');
-
     const avgTotalCityCost = average(combinedData, 'realSum');
     const avgWeekdayCost = average(weekdayData, 'realSum');
     const avgWeekendCost = average(weekendData, 'realSum');
     const avgGuestSatisfaction = average(combinedData, 'guest_satisfaction_overall');
     const avgPersonCapacity = average(combinedData, 'person_capacity');
-    const avgBedroomCapacity = average(combinedData, 'bedrooms');
+    const avgBedrooms = average(combinedData, 'bedrooms');
     const avgDistanceFromMetroStation = average(combinedData, 'metro_dist');
     const avgDistanceFromCityCenter = average(combinedData, 'dist');
 
@@ -66,8 +65,64 @@ export async function GET(request, { params }) {
     // Convert counts object into array of {label, value} objects for the donut chart
     const roomTypeDistributionData = Object.keys(roomTypeCounts).map(type => ({
       label: type, // Room type string
-      value: roomTypeCounts[type] // Room type count
+      value: roomTypeCounts[type] // Room count
     }));
+
+// --- Sankey Diagram Data Calculation (room_type to host_is_superhost) ---
+    const sourceNodes = Object.keys(roomTypeCounts).map(type => ({ nodeId: type, name: type }));
+    const targetNodes = [
+      { nodeId: "Superhost", name: "Superhost" },
+      { nodeId: "Not Superhost", name: "Not Superhost" }
+    ];
+    const sankeyNodes = [...sourceNodes, ...targetNodes];
+
+    let superhostTrueCount = 0;
+    let superhostFalseCount = 0;
+
+    const linkCounts = combinedData.reduce((acc, listing, index) => {
+        const roomType = listing.room_type;
+        const rawSuperhostValue = listing.host_is_superhost;
+        let isActuallySuperhost = false; // Default to false
+
+        // Robust check for "Superhost"
+        if (typeof rawSuperhostValue === 'boolean') {
+            isActuallySuperhost = rawSuperhostValue;
+        } else if (typeof rawSuperhostValue === 'string') {
+            // Trim whitespace before converting to uppercase and comparing
+            const upperVal = rawSuperhostValue.trim().toUpperCase();
+            isActuallySuperhost = upperVal === 'TRUE' || upperVal === 'T' || upperVal === 'YES' || upperVal === '1';
+        } else if (typeof rawSuperhostValue === 'number') {
+            isActuallySuperhost = rawSuperhostValue === 1;
+        }
+
+        if (isActuallySuperhost) {
+            superhostTrueCount++;
+        } else {
+            superhostFalseCount++;
+        }
+        
+        const superhostStatus = isActuallySuperhost ? "Superhost" : "Not Superhost";
+
+        if (roomType) {
+            const key = `${roomType}->${superhostStatus}`;
+            acc[key] = (acc[key] || 0) + 1;
+        }
+        return acc;
+    }, {});
+
+    const sankeyLinks = Object.keys(linkCounts).map(key => {
+        const [source, target] = key.split('->');
+        return {
+            source: source,
+            target: target,
+            value: linkCounts[key]
+        };
+    });
+
+    const sankeyData = {
+        nodes: sankeyNodes,
+        links: sankeyLinks
+    };
 
     const aggregatedData = {
     city: cityId,
@@ -84,10 +139,11 @@ export async function GET(request, { params }) {
     },
     guestSatisfaction: avgGuestSatisfaction,
     personCapacity: avgPersonCapacity,
-    bedroomCapacity: avgBedroomCapacity,
+    bedroomCapacity: avgBedrooms,
     metroDist: avgDistanceFromMetroStation,
     cityCenterDist: avgDistanceFromCityCenter,
     roomTypeDistribution: roomTypeDistributionData,
+    sankeyData: sankeyData,
     };
 
     // ---------------------------------------------------------

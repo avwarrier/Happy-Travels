@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getCityMatch } from '@/util/functions'
 import Link from 'next/link'
+import ProgressBar from '@/components/ProgressBar'
 
 const page = () => {
     const searchParams = useSearchParams()
@@ -49,6 +50,7 @@ const page = () => {
 
   return (
     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
+        <ProgressBar progress={20/21}/>
         {
             topCities.length > 0 ?
                 <div className='flex flex-col items-center h-full w-[80%] mt-[30px] gap-[20px]'>
@@ -60,7 +62,7 @@ const page = () => {
                         <div>
                             <Link href={"/"}>
                                 <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
-                                    <p className='text-white text-[2vh]'>back to quiz</p>
+                                    <p className='text-white text-[2vh]'>Start Over</p>
                                 </button>
                             </Link>
                         </div>
@@ -95,11 +97,14 @@ const page = () => {
                         </div>
                     </div>
                     <Link
-                    href={{pathname: "/map", query: {
+                    href={{
+                        pathname: "/map",
+                        query: {
+                        ...Object.fromEntries(searchParams.entries()),
                         top1: topCities[0]?.city,
                         top2: topCities[1]?.city,
                         top3: topCities[2]?.city,
-                        },}}>
+                        }}}>
                         <button className={`h-[5vh] w-[11vh] mt-[20px] cursor-pointer hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} rounded-full shadow-md`}>
                             <p className='text-white text-[2vh]'>To map</p>
                         </button>
