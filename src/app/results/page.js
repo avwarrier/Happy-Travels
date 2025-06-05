@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getCityMatch } from '@/util/functions'
 import Link from 'next/link'
+import ProgressBar from '@/components/ProgressBar'
 
 const page = () => {
     const searchParams = useSearchParams()
@@ -49,6 +50,7 @@ const page = () => {
 
   return (
     <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
+        <ProgressBar progress={20/21}/>
         {
             topCities.length > 0 ?
                 <div className='flex flex-col items-center h-full w-[80%] mt-[30px] gap-[20px]'>

@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import ProgressBar from '@/components/ProgressBar'
 
 import { europeanCities } from '@/components/Map/cityCoords';
 import { DataExaminedBarChart } from '@/components/Map/D3DataExaminedBarChart';
@@ -21,7 +22,7 @@ const EuropeMapLeafletWithNoSSR = dynamic(
   {
     ssr: false,
     loading: () => <div 
-    style={{ height: '700px', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    style={{ height: '600px', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       Loading Map...</div>
   }
 );
@@ -80,7 +81,8 @@ const handleCityClick = async (city) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-h-screen bg-white flex flex-col items-center p-4">
+      <ProgressBar progress={21/21}/>
+      <main className="min-h-screen bg-white flex flex-col items-center mt-4 p-4">
         <header className="w-full max-w-6xl mb-8 text-center">
           <div className='flex w-full justify-between'>
 
@@ -99,13 +101,13 @@ const handleCityClick = async (city) => {
             </Link>
           </div>
 
-          <p className="text-md md:text-lg text-[#E51D51] mt-2">
+          <p className="text-md md:text-lg text-[#E51D51]">
             Click a city marker to explore its Airbnb summary.
           </p>
         </header>
 
-        <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4">
-          <div className="lg:flex-grow bg-white p-1 rounded-xl shadow-2xl overflow-hidden">
+        <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 h-[600px]">
+          <div className="lg:flex-grow bg-white p-1 rounded-xl overflow-hidden">
             <EuropeMapLeafletWithNoSSR
               cities={europeanCities}
               onCityClick={handleCityClick}
@@ -114,7 +116,7 @@ const handleCityClick = async (city) => {
           </div>
 
           {/* Data Display Panel */}
-          <aside className="lg:w-1/3 xl:w-1/4 bg-white p-5 rounded-xl shadow-2xl lg:max-h-[700px] overflow-y-auto text-gray-900">
+          <aside className="lg:w-1/3 xl:w-1/4 bg-white p-5 rounded-xl border border-gray-100 lg:max-h-[700px] overflow-y-auto text-gray-900">
             {selectedCity ? (
               <>
                 <h2 className="text-xl font-semibold mb-5">
