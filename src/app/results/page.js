@@ -50,6 +50,7 @@ const page = () => {
 
   return (
     <div className='relative flex flex-col items-center min-h-screen w-full bg-white'>
+      <ProgressBar progress={1} />
       {/* Top right buttons */}
       <div className="absolute top-8 right-8 flex items-center gap-4 z-20">
         <Link href="/">
