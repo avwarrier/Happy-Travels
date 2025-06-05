@@ -105,6 +105,21 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
       .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    // Add tooltip div
+    const tooltip = d3.select(d3Container.current)
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('border-radius', '8px')
+      .style('padding', '12px')
+      .style('box-shadow', '0 4px 6px rgba(0, 0, 0, 0.1)')
+      .style('font-size', '12px')
+      .style('pointer-events', 'none')
+      .style('transition', 'opacity 0.2s ease-in-out')
+      .style('z-index', 1000);
+
     const allScores = cityData.map(d => d.averageSatisfaction);
     const dataMinScore = d3.min(allScores) ?? 0;
     const dataMaxScore = d3.max(allScores) ?? 100;
@@ -133,77 +148,161 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
       .paddingInner(barPadding / (barHeight + barPadding)) // Calculate padding based on desired px
       .paddingOuter(0.1);
 
-    // X-axis
+    // X-axis with animation
     svg.append('g')
       .attr('transform', `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d.toFixed(0)}`))
-      .append('text')
-        .attr('x', width / 2)
-        .attr('y', margin.bottom - 10)
-        .attr('fill', '#000')
-        .style('text-anchor', 'middle')
-        .style('font-size', '10px')
-        .text('Average Guest Satisfaction Score');
-        
-    // Y-axis (City Names)
-    svg.append('g').call(d3.axisLeft(y));
+      .selectAll('text')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .style('opacity', 1);
 
-    // Bars
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.bottom - 55)
+      .attr('fill', '#000')
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('opacity', 0)
+      .text('Average Guest Satisfaction Score')
+      .transition()
+      .duration(800)
+      .style('opacity', 1);
+        
+    // Y-axis (City Names) with animation
+    svg.append('g')
+      .call(d3.axisLeft(y))
+      .selectAll('text')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 100) // Stagger the animations
+        .style('opacity', 1);
+
+    // Bars with animation
     svg.selectAll('.bar')
       .data(cityData)
       .join('rect')
         .attr('class', 'bar')
         .attr('x', x(xDomainMin > 0 ? xDomainMin: 0))
         .attr('y', d => y(d.city))
-        .attr('width', d => x(d.averageSatisfaction) - x(xDomainMin > 0 ? xDomainMin: 0))
+        .attr('width', 0) // Start with width 0
         .attr('height', y.bandwidth())
         .attr('fill', (d, i) => {
           if (d.averageSatisfaction >= userMinSatisfaction) {
-            // Create gradient effect based on position in the sorted array
             const gradientColors = ['#FF8DA0', '#FF6B85', '#E51D51', '#E51D51', '#D90865'];
             const index = cityData.findIndex(city => city.city === d.city);
-            const normalizedIndex = index / (cityData.length - 1); // 0 to 1
+            const normalizedIndex = index / (cityData.length - 1);
             const colorIndex = Math.floor(normalizedIndex * (gradientColors.length - 1));
             return gradientColors[colorIndex];
           }
-          return '#A9A9A9'; // Grey for scores below minimum
+          return '#A9A9A9';
         })
         .attr('stroke', '#191919')
-        .attr('stroke-width', 0.5);
+        .attr('stroke-width', 0.5)
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 0.8);
 
-    // Value Labels on Bars
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 1);
+
+          const isAboveMin = d.averageSatisfaction >= userMinSatisfaction;
+          const diffFromMin = Math.abs(d.averageSatisfaction - userMinSatisfaction).toFixed(1);
+          const percentage = ((d.averageSatisfaction / 100) * 100).toFixed(1);
+          
+          tooltip.html(`
+            <div style="font-weight: 500; color: #191919; margin-bottom: 4px;">${d.city}</div>
+            <div style="color: #666; margin-bottom: 2px;">Satisfaction Score: ${d.averageSatisfaction.toFixed(1)}/100</div>
+            <div style="color: #666; margin-bottom: 2px;">Top ${percentage}% of satisfaction</div>
+            <div style="color: ${isAboveMin ? '#2E7D32' : '#D32F2F'}">
+              ${isAboveMin 
+                ? `✓ ${diffFromMin} points above your minimum`
+                : `✗ ${diffFromMin} points below your minimum`
+              }
+            </div>
+          `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 1);
+
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        })
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 100) // Stagger the animations
+        .ease(d3.easeCubicInOut)
+        .attr('width', d => x(d.averageSatisfaction) - x(xDomainMin > 0 ? xDomainMin: 0));
+
+    // Value Labels with animation
     svg.selectAll('.bar-label')
       .data(cityData)
       .join('text')
         .attr('class', 'bar-label')
-        .attr('x', d => x(d.averageSatisfaction) + 5) 
+        .attr('x', x(xDomainMin > 0 ? xDomainMin: 0)) // Start from left
         .attr('y', d => y(d.city) + y.bandwidth() / 2)
         .attr('dy', '.35em')
         .attr('text-anchor', 'start')
         .style('font-size', '10px')
         .style('fill', '#191919')
-        .text(d => d.averageSatisfaction.toFixed(1));
+        .style('opacity', 0)
+        .text(d => d.averageSatisfaction.toFixed(1))
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 100 + 400) // Stagger and delay after bars
+        .ease(d3.easeCubicInOut)
+        .attr('x', d => x(d.averageSatisfaction) + 5)
+        .style('opacity', 1);
 
-    // User Min Satisfaction Line
+    // User Min Satisfaction Line with animation
     if (userMinSatisfaction >= xDomainMin && userMinSatisfaction <= xDomainMax) {
-        svg.append('line')
-        .attr('x1', x(userMinSatisfaction))
+      svg.append('line')
+        .attr('x1', x(xDomainMin > 0 ? xDomainMin: 0)) // Start from left
         .attr('y1', 0)
-        .attr('x2', x(userMinSatisfaction))
+        .attr('x2', x(xDomainMin > 0 ? xDomainMin: 0)) // Start from left
         .attr('y2', chartHeight)
         .attr('stroke', '#555555')
         .attr('stroke-width', 1.5)
-        .attr('stroke-dasharray', '4,4');
+        .attr('stroke-dasharray', '4,4')
+        .transition()
+        .duration(800)
+        .delay(800) // After bars and labels
+        .ease(d3.easeCubicInOut)
+        .attr('x1', x(userMinSatisfaction))
+        .attr('x2', x(userMinSatisfaction));
 
-        svg.append('text')
-        .attr('x', x(userMinSatisfaction) + 4)
+      svg.append('text')
+        .attr('x', x(xDomainMin > 0 ? xDomainMin: 0)) // Start from left
         .attr('y', -5)
         .attr('text-anchor', 'start')
         .style('font-size', '10px')
         .style('fill', '#000000')
-        .text(`Your Min: ${userMinSatisfaction.toFixed(0)}`);
+        .style('opacity', 0)
+        .text(`Your Min: ${userMinSatisfaction.toFixed(0)}`)
+        .transition()
+        .duration(800)
+        .delay(1000) // After the line
+        .ease(d3.easeCubicInOut)
+        .attr('x', x(userMinSatisfaction) + 4)
+        .style('opacity', 1);
     }
 
+    // Clean up tooltip on unmount
+    return () => {
+      tooltip.remove();
+    };
 
   }, [loading, error, cityData, userMinSatisfaction]);
 
@@ -211,7 +310,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
       <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
-      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
+      <h2 className="text-[40px] font-normal text-black mb-2 leading-tight">
         {loading ? 'Calculating...' : error ? 'Error loading data.' :
           (cityData.length > 0 ? 
             (passPercentage === 100 ? 
@@ -222,6 +321,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
           )
         }
       </h2>
+      <p className="text-[16px] text-gray-500 mb-8 -mt-2">Hover over the data for more information</p>
 
       {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
       {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}

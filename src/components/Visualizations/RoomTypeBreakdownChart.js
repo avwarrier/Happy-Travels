@@ -138,6 +138,21 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
       .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    // Add tooltip div
+    const tooltip = d3.select(d3Container.current)
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('border-radius', '8px')
+      .style('padding', '12px')
+      .style('box-shadow', '0 4px 6px rgba(0, 0, 0, 0.1)')
+      .style('font-size', '12px')
+      .style('pointer-events', 'none')
+      .style('transition', 'opacity 0.2s ease-in-out')
+      .style('z-index', 1000);
+
     const y = d3.scaleBand()
       .domain(cityRoomTypeData.map(d => d.city))
       .rangeRound([0, chartHeight])
@@ -151,17 +166,37 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
       .domain(CsvRoomTypes)
       .range(colors);
 
-    // X-axis
+    // X-axis with animation
     svg.append('g')
       .attr('transform', `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`))
-      .append('text')
-        .attr('x', width / 2).attr('y', margin.bottom - 10)
-        .attr('fill', '#191919').style('text-anchor', 'middle')
-        .text('Proportion of Listings');
+      .selectAll('text')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .style('opacity', 1);
 
-    // Y-axis
-    svg.append('g').call(d3.axisLeft(y));
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.bottom - 55)
+      .attr('fill', '#191919')
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('opacity', 0)
+      .text('Proportion of Listings')
+      .transition()
+      .duration(800)
+      .style('opacity', 1);
+
+    // Y-axis with animation
+    svg.append('g')
+      .call(d3.axisLeft(y))
+      .selectAll('text')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 100) // Stagger the animations
+        .style('opacity', 1);
 
     // City Groups for stacked bars
     const cityGroup = svg.selectAll('.city-group')
@@ -173,15 +208,8 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
     // Create the stack generator
     const stack = d3.stack()
         .keys(CsvRoomTypes)
-        .value((d, key) => {
-            // 'd' here is one of the objects from dataForStacking
-            // 'key' is one of CsvRoomTypes ('Entire home/apt' or 'Private room')
-            return d[key] || 0; // Directly access the property matching the key
-        });
+        .value((d, key) => d[key] || 0);
     
-    // Prepare data for stacking by transforming cityRoomTypeData slightly
-    // The stack generator expects an array of objects, where each object represents a city
-    // and has properties matching the keys (CsvRoomTypes)
     const dataForStacking = cityRoomTypeData.map(city => {
         const cityObj = { city: city.city };
         city.types.forEach(typeDetail => {
@@ -192,33 +220,69 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
 
     const stackedData = stack(dataForStacking);
 
-    // Draw the stacked bars
+    // Draw the stacked bars with animation
     cityGroup.selectAll('rect')
-      .data((d, i) => {
-          // For each city, we need to map to the series data from stackedData
-          // Each series corresponds to a room type (key)
-          // Each element in a series is [startValue, endValue] for that city
-          return CsvRoomTypes.map(key => {
-              const series = stackedData.find(s => s.key === key);
-              const cityValues = series ? series[i] : [0,0]; // series[i] should give [start, end] for city i
-              return {
-                  key: key,
-                  city: d.city,
-                  values: cityValues,
-                  percent: d.types.find(t => t.type === key)?.percent || 0
-              };
-          });
-      })
+      .data((d, i) => CsvRoomTypes.map(key => {
+          const series = stackedData.find(s => s.key === key);
+          const cityValues = series ? series[i] : [0,0];
+          return {
+              key: key,
+              city: d.city,
+              values: cityValues,
+              percent: d.types.find(t => t.type === key)?.percent || 0,
+              price: key === CsvRoomTypes[0] ? d.medianEntirePrice : d.medianPrivatePrice
+          };
+      }))
       .join('rect')
         .attr('x', d => x(d.values[0]))
-        .attr('y', 0) // y is relative to the cityGroup, which is already positioned by y-scale
-        .attr('width', d => x(d.values[1]) - x(d.values[0]))
+        .attr('y', 0)
+        .attr('width', 0) // Start with width 0
         .attr('height', y.bandwidth())
-        .attr('fill', d => colorScale(d.key)) // Use the color scale directly
+        .attr('fill', d => colorScale(d.key))
         .attr('stroke', '#191919')
-        .attr('stroke-width', 0.5);
+        .attr('stroke-width', 0.5)
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 0.8);
 
-    // Bar Labels (inside segments)
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 1);
+
+          const isSelected = (d.key === 'Entire home/apt' && userSelectedRoomType === 'entire_place') ||
+                           (d.key === 'Private room' && userSelectedRoomType === 'private_room');
+          
+          tooltip.html(`
+            <div style="font-weight: 500; color: #191919; margin-bottom: 4px;">${d.city}</div>
+            <div style="color: #666; margin-bottom: 2px;">${d.key}: ${d.percent.toFixed(1)}%</div>
+            <div style="color: #666; margin-bottom: 2px;">Typical Price: €${d.price.toFixed(0)}</div>
+            <div style="color: ${isSelected ? '#2E7D32' : '#666'}">
+              ${isSelected ? '✓ Your selected type' : ''}
+            </div>
+          `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 1);
+
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        })
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 100) // Stagger the animations
+        .ease(d3.easeCubicInOut)
+        .attr('width', d => x(d.values[1]) - x(d.values[0]));
+
+    // Bar Labels with animation
     cityGroup.selectAll('.bar-label')
       .data((d, i) => CsvRoomTypes.map(key => {
           const series = stackedData.find(s => s.key === key);
@@ -234,13 +298,25 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
         .attr('text-anchor', 'middle')
         .style('font-size', '9px')
         .style('fill', 'white')
-        .text(d => d.percent > 5 ? `${d.percent.toFixed(0)}%` : ''); // Only show if segment > 5%
+        .style('opacity', 0)
+        .text(d => d.percent > 5 ? `${d.percent.toFixed(0)}%` : '')
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 100 + 400) // Stagger and delay after bars
+        .ease(d3.easeCubicInOut)
+        .style('opacity', 1);
         
-    // Legend
+    // Legend with animation
     const legend = svg.append('g')
-        .attr('font-family', 'sans-serif').attr('font-size', 10).attr('text-anchor', 'start')
-        .selectAll('g').data(CsvRoomTypes).join('g')
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', 10)
+        .attr('text-anchor', 'start')
+        .style('opacity', 0)
+        .selectAll('g')
+        .data(CsvRoomTypes)
+        .join('g')
             .attr('transform', (d, i) => `translate(${i * 140}, ${chartHeight + margin.bottom -15})`);
+
     legend.append('rect')
         .attr('x', 0)
         .attr('width', 19)
@@ -248,12 +324,25 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
         .attr('fill', (d, i) => colors[i])
         .attr('stroke', '#191919')
         .attr('stroke-width', 0.5);
+
     legend.append('text')
         .attr('x', 24)
         .attr('y', 9.5)
         .attr('dy', '0.32em')
         .style('fill', '#191919')
         .text(d => d);
+
+    // Animate legend in
+    svg.selectAll('g.legend')
+        .transition()
+        .duration(800)
+        .delay(1000) // After bars and labels
+        .style('opacity', 1);
+
+    // Clean up tooltip on unmount
+    return () => {
+      tooltip.remove();
+    };
 
   }, [loading, error, cityRoomTypeData, userSelectedRoomType]);
 
@@ -275,7 +364,8 @@ const RoomTypeBreakdownChart = ({ userSelectedRoomType }) => {
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
       <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
-      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">{getInsightText()}</h2>
+      <h2 className="text-[40px] font-normal text-black mb-2 leading-tight">{getInsightText()}</h2>
+      <p className="text-[16px] text-gray-500 mb-8 -mt-2">Hover over the data for more information</p>
       {loading && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
       {error && <div className="w-full h-[350px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
       {!loading && !error && (

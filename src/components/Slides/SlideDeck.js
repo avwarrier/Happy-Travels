@@ -1,5 +1,5 @@
 /* components/SlideDeck.js */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Slide from './Slide';
 import ProgressBar from '../ProgressBar';
 import WeekdayWeekendChart from '../Visualizations/WeekdayWeekendChart';
@@ -11,6 +11,7 @@ import CitySatisfactionChart from '../Visualizations/CitySatisfactionChart';
 import RoomTypeBreakdownChart from '../Visualizations/RoomTypeBreakdownChart';
 import SuperhostDistributionChart from '../Visualizations/SuperhostDistributionChart';
 import PersonCapacityChart from '../Visualizations/PersonCapacityChart';
+import Confetti from 'react-dom-confetti';
 
 import Slider from '@mui/material/Slider';
 import InputLabel from '@mui/material/InputLabel';
@@ -38,6 +39,41 @@ const SlideDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction,    setDirection]    = useState('next');
 
+  // Confetti state
+  const [confettiActive, setConfettiActive] = useState(false);
+
+  /* ────────── navigation helpers ────────── */
+  const nextSlide = () => {
+    if (currentSlide < totalSlides - 1) {
+      setDirection('next');
+      setCurrentSlide((s) => s + 1);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentSlide > 0) {
+      setDirection('prev');
+      setCurrentSlide((s) => s - 1);
+    }
+  };
+
+  /* ────────── keyboard navigation ────────── */
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter' || event.key === 'Return') {
+        if (currentSlide < totalSlides - 1 && currentSlide !== 18) { // Don't trigger on final slide
+          event.preventDefault(); // Prevent default behavior
+          nextSlide();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true); // Using capture phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [currentSlide, nextSlide]); // Added nextSlide to dependencies
+
   /* ────────── question state (unchanged) ────────── */
   const [weekday, setWeekday]= useState(true);
   const [price, setPrice] = useState(300);
@@ -59,21 +95,6 @@ const SlideDeck = () => {
     metro: 3,
   });
 
-  /* ────────── navigation helpers ────────── */
-  const nextSlide = () => {
-    if (currentSlide < totalSlides - 1) {
-      setDirection('next');
-      setCurrentSlide((s) => s + 1);
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setDirection('prev');
-      setCurrentSlide((s) => s - 1);
-    }
-  };
-
   /* ────────── handler helpers ────────── */
   const handleCleanlinessChange = (e, v) => setCleanlinessValue(v);
   const handleMetroDistanceChange = (e, v) => setMetroDistance(v);
@@ -81,6 +102,23 @@ const SlideDeck = () => {
 
   /* progress for <ProgressBar/> (0 → 1) */
   const progress = currentSlide / (totalSlides - 1);
+
+  // Confetti effect for final slide
+  useEffect(() => {
+    if (currentSlide === 18) {
+      setConfettiActive(true);
+      setTimeout(() => setConfettiActive(false), 2000);
+    }
+  }, [currentSlide]);
+
+  useEffect(() => {
+    if (confettiActive) {
+      document.body.classList.add('no-horizontal-scroll');
+    } else {
+      document.body.classList.remove('no-horizontal-scroll');
+    }
+    return () => document.body.classList.remove('no-horizontal-scroll');
+  }, [confettiActive]);
 
   /* ────────── slide factory ────────── */
   const renderSlide = () => {
@@ -259,8 +297,8 @@ const SlideDeck = () => {
                     valueLabelFormat={(v) => `$${v}`}
                   />
                   <div className="flex justify-between text-gray-400 text-base mt-4">
-                    <span>$30</span>
-                    <span>$800</span>
+                    <span>$20</span>
+                    <span>$650</span>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
@@ -345,22 +383,59 @@ const SlideDeck = () => {
                 </div>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">How important is cleanliness to you?</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Value</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Value</InputLabel>
                     <Select
                       value={importance.cleanliness}
                       label="Select Value"
                       onChange={(e) => setImportance({ ...importance, cleanliness: e.target.value })}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
-                      <MenuItem value={5}>5 - Very Important</MenuItem>
-                      <MenuItem value={4}>4 - Pretty Important</MenuItem>
-                      <MenuItem value={3}>3 - Somewhat Important</MenuItem>
-                      <MenuItem value={2}>2 - Not Important</MenuItem>
-                      <MenuItem value={1}>1 - Don't Care</MenuItem>
+                      <MenuItem value={5} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>5 - Very Important</MenuItem>
+                      <MenuItem value={4} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>4 - Pretty Important</MenuItem>
+                      <MenuItem value={3} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>3 - Somewhat Important</MenuItem>
+                      <MenuItem value={2} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>2 - Not Important</MenuItem>
+                      <MenuItem value={1} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>1 - Don't Care</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
@@ -447,22 +522,59 @@ const SlideDeck = () => {
                 </div>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">How important is metro distance to you?</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Value</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Value</InputLabel>
                     <Select
                       value={importance.metro}
                       label="Select Value"
                       onChange={(e) => setImportance({ ...importance, metro: e.target.value })}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
-                      <MenuItem value={5}>5 - Very Important</MenuItem>
-                      <MenuItem value={4}>4 - Pretty Important</MenuItem>
-                      <MenuItem value={3}>3 - Somewhat Important</MenuItem>
-                      <MenuItem value={2}>2 - Not Important</MenuItem>
-                      <MenuItem value={1}>1 - Don't Care</MenuItem>
+                      <MenuItem value={5} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>5 - Very Important</MenuItem>
+                      <MenuItem value={4} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>4 - Pretty Important</MenuItem>
+                      <MenuItem value={3} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>3 - Somewhat Important</MenuItem>
+                      <MenuItem value={2} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>2 - Not Important</MenuItem>
+                      <MenuItem value={1} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>1 - Don't Care</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
@@ -548,28 +660,68 @@ const SlideDeck = () => {
                 </div>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">How important is guest satisfaction score to you?</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Value</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Value</InputLabel>
                     <Select
                       value={importance.satisfaction}
                       label="Select Value"
                       onChange={(e) => setImportance({ ...importance, satisfaction: e.target.value })}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
-                      <MenuItem value={5}>5 - Very Important</MenuItem>
-                      <MenuItem value={4}>4 - Pretty Important</MenuItem>
-                      <MenuItem value={3}>3 - Somewhat Important</MenuItem>
-                      <MenuItem value={2}>2 - Not Important</MenuItem>
-                      <MenuItem value={1}>1 - Don't Care</MenuItem>
+                      <MenuItem value={5} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>5 - Very Important</MenuItem>
+                      <MenuItem value={4} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>4 - Pretty Important</MenuItem>
+                      <MenuItem value={3} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>3 - Somewhat Important</MenuItem>
+                      <MenuItem value={2} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>2 - Not Important</MenuItem>
+                      <MenuItem value={1} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>1 - Don't Care</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
-                <button onClick={nextSlide} className={nextButtonClass}>
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -619,15 +771,52 @@ const SlideDeck = () => {
                 </h2>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Select the room type that best fits your needs</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Room Type</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Room Type</InputLabel>
                     <Select
                       value={roomType}
                       label="Select Room Type"
                       onChange={(e) => setRoomType(e.target.value)}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
                       <MenuItem value="entire_place">Entire Place</MenuItem>
@@ -637,28 +826,68 @@ const SlideDeck = () => {
                 </div>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">How important is room type to you?</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Value</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Value</InputLabel>
                     <Select
                       value={importance.roomType}
                       label="Select Value"
                       onChange={(e) => setImportance({ ...importance, roomType: e.target.value })}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
-                      <MenuItem value={5}>5 - Very Important</MenuItem>
-                      <MenuItem value={4}>4 - Pretty Important</MenuItem>
-                      <MenuItem value={3}>3 - Somewhat Important</MenuItem>
-                      <MenuItem value={2}>2 - Not Important</MenuItem>
-                      <MenuItem value={1}>1 - Don't Care</MenuItem>
+                      <MenuItem value={5} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>5 - Very Important</MenuItem>
+                      <MenuItem value={4} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>4 - Pretty Important</MenuItem>
+                      <MenuItem value={3} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>3 - Somewhat Important</MenuItem>
+                      <MenuItem value={2} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>2 - Not Important</MenuItem>
+                      <MenuItem value={1} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>1 - Don't Care</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
-                <button onClick={nextSlide} className={nextButtonClass}>
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -674,16 +903,14 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
-                <RoomTypeBreakdownChart userSelectedRoomType={roomType} />
-                <div className="flex justify-start w-full mt-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button onClick={nextSlide} className={nextButtonClass}>
-                      Next
-                    </button>
-                    <span className="text-sm text-gray-400">Press enter</span>
-                  </div>
+            <div className="w-full max-w-[700px] mx-auto px-4 pb-12">
+              <RoomTypeBreakdownChart userSelectedRoomType={roomType} />
+              <div className="flex justify-start w-full mt-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
                 </div>
               </div>
             </div>
@@ -711,15 +938,52 @@ const SlideDeck = () => {
                 </p>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Select your preference</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Preference</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Preference</InputLabel>
                     <Select
                       value={superhostPreference}
                       label="Select Preference"
                       onChange={(e) => setSuperhostPreference(e.target.value)}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
                       <MenuItem value="superhost_only">Yes, only show Superhost listings</MenuItem>
@@ -729,28 +993,68 @@ const SlideDeck = () => {
                 </div>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">How important is Superhost status to you?</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Value</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Value</InputLabel>
                     <Select
                       value={importance.superhost}
                       label="Select Value"
                       onChange={(e) => setImportance({ ...importance, superhost: e.target.value })}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
-                      <MenuItem value={5}>5 - Very Important</MenuItem>
-                      <MenuItem value={4}>4 - Pretty Important</MenuItem>
-                      <MenuItem value={3}>3 - Somewhat Important</MenuItem>
-                      <MenuItem value={2}>2 - Not Important</MenuItem>
-                      <MenuItem value={1}>1 - Don't Care</MenuItem>
+                      <MenuItem value={5} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>5 - Very Important</MenuItem>
+                      <MenuItem value={4} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>4 - Pretty Important</MenuItem>
+                      <MenuItem value={3} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>3 - Somewhat Important</MenuItem>
+                      <MenuItem value={2} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>2 - Not Important</MenuItem>
+                      <MenuItem value={1} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>1 - Don't Care</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
-                <button onClick={nextSlide} className={nextButtonClass}>
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -766,16 +1070,14 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
-                <SuperhostDistributionChart userSuperhostPreference={superhostPreference} />
-                <div className="flex justify-start w-full mt-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button onClick={nextSlide} className={nextButtonClass}>
-                      Next
-                    </button>
-                    <span className="text-sm text-gray-400">Press enter</span>
-                  </div>
+            <div className="w-full max-w-[700px] mx-auto px-4 pb-12">
+              <SuperhostDistributionChart userSuperhostPreference={superhostPreference} />
+              <div className="flex justify-start w-full mt-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
                 </div>
               </div>
             </div>
@@ -823,28 +1125,68 @@ const SlideDeck = () => {
                 </div>
                 <div className="max-w-xs w-full mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-2">How important is person capacity to you?</label>
-                  <FormControl sx={{ width: '100%' }}>
-                    <InputLabel sx={{ '&.Mui-focused': { color: 'black' } }}>Select Value</InputLabel>
+                  <FormControl
+                    sx={{
+                      width: '100%',
+                      background: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                      '.MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        fontSize: '1rem',
+                        background: '#fff',
+                        '& fieldset': {
+                          borderColor: '#e5e5e5',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E51D51',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E51D51',
+                          borderWidth: '2px',
+                        },
+                      },
+                      '.MuiInputLabel-root': {
+                        color: '#888',
+                        fontWeight: 400,
+                        fontSize: '0.95rem',
+                        '&.Mui-focused': {
+                          color: '#E51D51',
+                        },
+                      },
+                      '.MuiSelect-icon': {
+                        color: '#E51D51',
+                      },
+                    }}
+                  >
+                    <InputLabel>Select Value</InputLabel>
                     <Select
                       value={importance.capacity}
                       label="Select Value"
                       onChange={(e) => setImportance({ ...importance, capacity: e.target.value })}
-                      sx={{
-                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'black' },
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                          },
+                        },
                       }}
                     >
-                      <MenuItem value={5}>5 - Very Important</MenuItem>
-                      <MenuItem value={4}>4 - Pretty Important</MenuItem>
-                      <MenuItem value={3}>3 - Somewhat Important</MenuItem>
-                      <MenuItem value={2}>2 - Not Important</MenuItem>
-                      <MenuItem value={1}>1 - Don't Care</MenuItem>
+                      <MenuItem value={5} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>5 - Very Important</MenuItem>
+                      <MenuItem value={4} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>4 - Pretty Important</MenuItem>
+                      <MenuItem value={3} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>3 - Somewhat Important</MenuItem>
+                      <MenuItem value={2} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>2 - Not Important</MenuItem>
+                      <MenuItem value={1} sx={{ fontSize: '1rem', '&.Mui-selected': { backgroundColor: '#FCE4EC', color: '#E51D51' }, '&:hover': { backgroundColor: '#F8BBD0' } }}>1 - Don't Care</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
-                <button onClick={nextSlide} className={nextButtonClass}>
-                  Next
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
+                </div>
               </div>
             </div>
           </Slide>
@@ -860,16 +1202,14 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex flex-col items-center justify-center h-full w-full">
-              <div className="w-full max-w-3xl mx-auto px-4 pb-12">
-                <PersonCapacityChart userSelectedCapacity={personCapacity} />
-                <div className="flex justify-start w-full mt-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button onClick={nextSlide} className={nextButtonClass}>
-                      Next
-                    </button>
-                    <span className="text-sm text-gray-400">Press enter</span>
-                  </div>
+            <div className="w-full max-w-[700px] mx-auto px-4 pb-12">
+              <PersonCapacityChart userSelectedCapacity={personCapacity} />
+              <div className="flex justify-start w-full mt-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <button onClick={nextSlide} className={nextButtonClass}>
+                    Next
+                  </button>
+                  <span className="text-sm text-gray-400">Press enter</span>
                 </div>
               </div>
             </div>
@@ -886,31 +1226,63 @@ const SlideDeck = () => {
             prev={prevSlide}
             direction={direction}
           >
-            <div className="flex justify-center items-center h-full w-full p-[30px]">
-              <button
-                className={`cursor-pointer rounded-xl hover:opacity-90 transition-all duration-500 ease-in-out w-[250px] h-[60px] shadow-md ${gradient} text-white`}
-                onClick={() => {
-                  const hasEmpty = Object.keys(importance).some((key) => importance[key] === '');
-                  if (hasEmpty) {
-                    alert('Missing an importance value, please fill them all out!');
-                  } else {
-                    const queryObj = {
-                      weekday:           JSON.stringify(weekday),
-                      price:        JSON.stringify(price),
-                      distance:          JSON.stringify(metroDistance),
-                      personCapacity:    JSON.stringify(personCapacity),
-                      cleanlinessValue:  String(cleanlinessValue),
-                      satisfactionScore: String(satisfactionScore),
-                      superhostPreference: superhostPreference || '',
-                      importance:        JSON.stringify(importance),
-                    };
-                    const search = new URLSearchParams(queryObj).toString();
-                    router.push(`/results?${search}`);
-                  }
-                }}
-              >
-                Ready to get your top cities?
-              </button>
+            <div className="flex flex-col items-center justify-center h-full w-full relative">
+              {/* Centered Confetti */}
+              <div style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 20
+              }}>
+                <Confetti
+                  active={confettiActive}
+                  config={{
+                    angle: 90,
+                    spread: 180,
+                    startVelocity: 45,
+                    elementCount: 250,
+                    dragFriction: 0.08,
+                    duration: 2500,
+                    stagger: 1,
+                    width: "10px",
+                    height: "10px",
+                    perspective: "500px",
+                    colors: ["#E51D51", "#F8BBD0"]
+                  }}
+                />
+              </div>
+              <div className="flex flex-col items-start justify-center" style={{ minHeight: '60vh' }}>
+                <h1 className="text-[2.5rem] md:text-[2.8rem] font-semibold text-black mb-8 leading-tight">
+                  That's it, your top cities<br />
+                  <span className="block text-left">are ready!</span>
+                </h1>
+                <button
+                  className="bg-[#E51D51] hover:bg-[#c21844] text-white px-8 py-3 rounded-full text-lg font-medium shadow transition-all duration-200 focus:outline-none mt-2"
+                  style={{ alignSelf: 'flex-start' }}
+                  onClick={() => {
+                    const hasEmpty = Object.keys(importance).some((key) => importance[key] === '');
+                    if (hasEmpty) {
+                      alert('Missing an importance value, please fill them all out!');
+                    } else {
+                      const queryObj = {
+                        weekday:           JSON.stringify(weekday),
+                        price:        JSON.stringify(price),
+                        distance:          JSON.stringify(metroDistance),
+                        personCapacity:    JSON.stringify(personCapacity),
+                        cleanlinessValue:  String(cleanlinessValue),
+                        satisfactionScore: String(satisfactionScore),
+                        superhostPreference: superhostPreference || '',
+                        importance:        JSON.stringify(importance),
+                      };
+                      const search = new URLSearchParams(queryObj).toString();
+                      router.push(`/results?${search}`);
+                    }
+                  }}
+                >
+                  View Now
+                </button>
+              </div>
             </div>
           </Slide>
         );

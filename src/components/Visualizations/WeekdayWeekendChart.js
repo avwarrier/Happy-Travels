@@ -113,6 +113,34 @@ const WeekdayWeekendChart = ({ weekday }) => {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.bottom - 45)
+      .attr('fill', '#000')
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('opacity', 0)
+      .text('Weekend vs Weekday Price')
+      .transition()
+      .duration(800)
+      .style('opacity', 1);
+
+
+    // Add tooltip div
+    const tooltip = d3.select(d3Container.current)
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('border-radius', '8px')
+      .style('padding', '12px')
+      .style('box-shadow', '0 4px 6px rgba(0, 0, 0, 0.1)')
+      .style('font-size', '12px')
+      .style('pointer-events', 'none')
+      .style('transition', 'opacity 0.2s ease-in-out')
+      .style('z-index', 1000);
+
     const allPrices = processedChartData.flatMap(d => [d.weekdayPrice, d.weekendPrice]);
     const yMax = d3.max(allPrices);
     const y = d3.scaleLinear()
@@ -124,41 +152,133 @@ const WeekdayWeekendChart = ({ weekday }) => {
       .range([0, width])
       .padding(0.5);
 
+    // Add axes with animation
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x).tickSize(0).tickPadding(10))
-      .selectAll('text').style('font-size', '12px').attr('fill', '#333');
+      .selectAll('text')
+      .style('font-size', '12px')
+      .attr('fill', '#333')
+      .style('opacity', 0)
+      .transition()
+      .duration(800)
+      .style('opacity', 1);
 
     svg.append('g')
       .call(d3.axisLeft(y).ticks(5).tickFormat(d => `€${d}`))
-      .selectAll('text').style('font-size', '10px').attr('fill', '#333');
+      .selectAll('text')
+      .style('font-size', '10px')
+      .attr('fill', '#333')
+      .style('opacity', 0)
+      .transition()
+      .duration(800)
+      .style('opacity', 1);
 
-    processedChartData.forEach(d => {
-      svg.append('line')
+    // Create groups for each city
+    const cityGroups = svg.selectAll('.city-group')
+      .data(processedChartData)
+      .enter()
+      .append('g')
+      .attr('class', 'city-group')
+      .style('opacity', 0)
+      .transition()
+      .duration(400)
+      .delay((d, i) => i * 180)
+      .style('opacity', 1);
+
+    // Add lines with staggered animation
+    processedChartData.forEach((d, i) => {
+      const group = svg.append('g').attr('class', 'city-group');
+      group.append('line')
         .attr('x1', x('Weekday'))
         .attr('y1', y(d.weekdayPrice))
+        .attr('x2', x('Weekday'))
+        .attr('y2', y(d.weekdayPrice))
+        .attr('stroke', '#555555')
+        .attr('stroke-width', 1.5)
+        .transition()
+        .duration(800)
+        .delay(i * 180)
+        .ease(d3.easeCubicInOut)
         .attr('x2', x('Weekend'))
-        .attr('y2', y(d.weekendPrice))
-        .attr('stroke', '#555555').attr('stroke-width', 1.5);
+        .attr('y2', y(d.weekendPrice));
 
-      svg.append('circle')
+      // Add weekday circle with tooltip, staggered after line
+      group.append('circle')
         .attr('cx', x('Weekday'))
         .attr('cy', y(d.weekdayPrice))
-        .attr('r', 4)
-        .attr('fill', weekday ? '#E51D51' : '#A9A9A9');
+        .attr('r', 0)
+        .attr('fill', weekday ? '#E51D51' : '#A9A9A9')
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event) {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 1);
+          tooltip.html(`
+            <div style="font-weight: 500; color: #191919; margin-bottom: 4px;">${d.city}</div>
+            <div style="color: #666;">Weekday Price: €${d.weekdayPrice.toFixed(2)}</div>
+          `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        })
+        .transition()
+        .duration(400)
+        .delay(i * 180 + 120)
+        .attr('r', 4);
 
-      svg.append('circle')
+      // Add weekend circle with tooltip, staggered after line
+      group.append('circle')
         .attr('cx', x('Weekend'))
         .attr('cy', y(d.weekendPrice))
-        .attr('r', 4)
-        .attr('fill', !weekday ? '#E51D51' : '#A9A9A9');
+        .attr('r', 0)
+        .attr('fill', !weekday ? '#E51D51' : '#A9A9A9')
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event) {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 1);
+          tooltip.html(`
+            <div style="font-weight: 500; color: #191919; margin-bottom: 4px;">${d.city}</div>
+            <div style="color: #666;">Weekend Price: €${d.weekendPrice.toFixed(2)}</div>
+          `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        })
+        .transition()
+        .duration(400)
+        .delay(i * 180 + 120)
+        .attr('r', 4);
 
-      svg.append('text')
+      // Add city label, staggered after circles
+      group.append('text')
         .attr('x', x('Weekend') + 10)
         .attr('y', y(d.weekendPrice))
-        .attr('dy', '0.35em').attr('text-anchor', 'start')
-        .text(d.city).style('font-size', '9px').style('fill', '#191919');
+        .attr('dy', '0.35em')
+        .attr('text-anchor', 'start')
+        .text(d.city)
+        .style('font-size', '9px')
+        .style('fill', '#191919')
+        .style('opacity', 0)
+        .transition()
+        .duration(400)
+        .delay(i * 180 + 240)
+        .style('opacity', 1);
     });
+
+    // Clean up tooltip on unmount
+    return () => {
+      tooltip.remove();
+    };
   }, [loading, error, processedChartData, weekday]); // Re-render D3 chart if loading/error state changes, or data changes, or weekday changes (for circle colors)
 
 
@@ -191,9 +311,10 @@ const WeekdayWeekendChart = ({ weekday }) => {
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
       <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
-      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
+      <h2 className="text-[40px] font-normal text-black mb-2 leading-tight">
         {renderInsightSentence()}
       </h2>
+      <p className="text-[16px] text-gray-500 mb-8 -mt-2">Hover over the data for more information</p>
 
       {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
       {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}

@@ -96,6 +96,34 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    // Add chart title at the top
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.bottom - 55)
+      .attr('fill', '#000')
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('opacity', 0)
+      .text('Median Price per Night')
+      .transition()
+      .duration(800)
+      .style('opacity', 1);
+
+    // Add tooltip div
+    const tooltip = d3.select(d3Container.current)
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('border-radius', '8px')
+      .style('padding', '12px')
+      .style('box-shadow', '0 4px 6px rgba(0, 0, 0, 0.1)')
+      .style('font-size', '12px')
+      .style('pointer-events', 'none')
+      .style('transition', 'opacity 0.2s ease-in-out')
+      .style('z-index', 1000);
+
     const x = d3.scaleBand()
       .domain(cityMedianPrices.map(d => d.city))
       .range([0, width])
@@ -103,10 +131,10 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
 
     const yMax = d3.max(cityMedianPrices, d => d.medianPrice);
     const y = d3.scaleLinear()
-      .domain([0, d3.max([yMax, userMaxPrice]) * 1.1 || 100]) // Ensure userMaxPrice is visible on y-axis
+      .domain([0, d3.max([yMax, userMaxPrice]) * 1.1 || 100])
       .range([height, 0]);
 
-    // X-axis
+    // X-axis with animation
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x))
@@ -115,58 +143,155 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
         .attr('dx', '-.8em')
         .attr('dy', '.15em')
         .attr('transform', 'rotate(-45)')
-        .style('font-size', '10px');
+        .style('font-size', '10px')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .style('opacity', 1);
 
-    // Y-axis
+    // Y-axis with animation
     svg.append('g')
       .call(d3.axisLeft(y).tickFormat(d => `€${d}`))
-      .selectAll('text').style('font-size', '10px');
+      .selectAll('text')
+        .style('font-size', '10px')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .style('opacity', 1);
 
-    // Bars
+    // Bars with animation
     svg.selectAll('.bar')
       .data(cityMedianPrices)
       .join('rect')
         .attr('class', 'bar')
         .attr('x', d => x(d.city))
-        .attr('y', d => y(d.medianPrice))
+        .attr('y', height) // Start from bottom
         .attr('width', x.bandwidth())
-        .attr('height', d => height - y(d.medianPrice))
+        .attr('height', 0) // Start with height 0
         .attr('fill', d => {
           if (d.medianPrice <= userMaxPrice) {
-            // Create gradient based on price relative to userMaxPrice
             const ratio = d.medianPrice / userMaxPrice;
-            if (ratio <= 0.33) return '#FF8DA0'; // Lightest red for lowest prices
-            if (ratio <= 0.66) return '#E51D51'; // Medium red for middle prices
-            return '#D90865'; // Darker red for higher prices (but still under max)
+            if (ratio <= 0.33) return '#FF8DA0';
+            if (ratio <= 0.66) return '#E51D51';
+            return '#D90865';
           }
-          return '#A9A9A9'; // Grey for prices above userMaxPrice
+          return '#A9A9A9';
         })
         .attr('stroke', '#191919')
-        .attr('stroke-width', 0.5);
+        .attr('stroke-width', 0.5)
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 0.8);
 
-    // Horizontal cutoff line for userMaxPrice
-    if (userMaxPrice !== null && userMaxPrice !== undefined && y(userMaxPrice) >=0 && y(userMaxPrice) <= height) {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 1);
+          
+          const isAffordable = d.medianPrice <= userMaxPrice;
+          const priceDiff = Math.abs(d.medianPrice - userMaxPrice);
+          const percentage = ((d.medianPrice / userMaxPrice) * 100).toFixed(1);
+          
+          tooltip.html(`
+            <div style="font-weight: 500; color: #191919; margin-bottom: 4px;">${d.city}</div>
+            <div style="color: #666; margin-bottom: 2px;">Median Price: €${d.medianPrice.toFixed(2)}</div>
+            <div style="color: ${isAffordable ? '#2E7D32' : '#D32F2F'}">
+              ${isAffordable 
+                ? `€${priceDiff.toFixed(2)} under your budget (${percentage}%)`
+                : `€${priceDiff.toFixed(2)} over your budget (${percentage}%)`
+              }
+            </div>
+          `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 1);
+
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        })
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 120)
+        .ease(d3.easeCubicInOut)
+        .attr('y', d => y(d.medianPrice))
+        .attr('height', d => height - y(d.medianPrice));
+
+    // Value labels with staggered animation (optional, if you want to add)
+    svg.selectAll('.bar-label')
+      .data(cityMedianPrices)
+      .join('text')
+        .attr('class', 'bar-label')
+        .attr('x', d => x(d.city) + x.bandwidth() / 2)
+        .attr('y', height)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '10px')
+        .style('fill', '#191919')
+        .style('opacity', 0)
+        .text(d => `€${d.medianPrice.toFixed(0)}`)
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 120 + 200)
+        .ease(d3.easeCubicInOut)
+        .attr('y', d => y(d.medianPrice) - 5)
+        .style('opacity', 1);
+
+    // Horizontal cutoff line with animation
+    if (userMaxPrice !== null && userMaxPrice !== undefined && y(userMaxPrice) >= 0 && y(userMaxPrice) <= height) {
       svg.append('line')
         .attr('x1', 0)
-        .attr('y1', y(userMaxPrice))
-        .attr('x2', width)
-        .attr('y2', y(userMaxPrice))
+        .attr('y1', height) // Start from bottom
+        .attr('x2', 0) // Start from left
+        .attr('y2', height)
         .attr('stroke', '#555555')
         .attr('stroke-width', 2)
-        .attr('stroke-dasharray', '4');
+        .attr('stroke-dasharray', '4')
+        .transition()
+        .duration(800)
+        .ease(d3.easeCubicInOut)
+        .attr('x2', width)
+        .attr('y1', y(userMaxPrice))
+        .attr('y2', y(userMaxPrice));
+
+      // Add label for the cutoff line
+      svg.append('text')
+        .attr('x', 5)
+        .attr('y', y(userMaxPrice) - 8)
+        .attr('text-anchor', 'start')
+        .attr('fill', '#555555')
+        .style('font-size', '12px')
+        .style('font-weight', '500')
+        .style('opacity', 0)
+        .text(`Your Max Price: €${userMaxPrice}`)
+        .transition()
+        .duration(800)
+        .delay(800)
+        .style('opacity', 1);
     }
 
+    // Clean up tooltip on unmount
+    return () => {
+      tooltip.remove();
+    };
   }, [cityMedianPrices, userMaxPrice, loading, error]); // Removed initialCities from deps as it's constant
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
       <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
-      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
+      <h2 className="text-[40px] font-normal text-black mb-2 leading-tight">
         {loading ? 'Calculating...' : error ? ' ' : 
           (parseInt(shareOfCities) >= 50 ? `About ${shareOfCities}%` : `Only ${shareOfCities}%`) + 
           ` of cities have a median ≤ €${userMaxPrice}.
         `}
       </h2>
+      <p className="text-[16px] text-gray-500 mb-8 -mt-2">Hover over the data for more information</p>
 
       {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
       {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
