@@ -34,7 +34,7 @@ export function getCityMatch(weekday, price, cleanlinessValue, distance, superho
 
         // Superhost
         if (superhostPreference == 'superhost_only') {
-            score += city.superhost_pct * importance.superhost
+            score += (city.superhost_pct / 100) * importance.superhost
         }
 
         // Person Capacity
