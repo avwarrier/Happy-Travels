@@ -114,12 +114,12 @@ const handleCityClick = async (city) => {
 
                     <div>
                       <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Metrics</h2>
-                      <div className='flex w-full justify-between items-center'>
+                      <div className='flex w-full justify-evenly sm:justify-between items-center'>
                         <AverageCost avgCost={cityDataDetails.avgCost.avgTotalCityCost} weekdayAvgCost={cityDataDetails.avgCost.avgWeekdayCost} weekendAvgCost={cityDataDetails.avgCost.avgWeekendCost}/>
                         <MetricGaugeChart value={cityDataDetails.avgCleanliness.combined?.toFixed(2)} label={"Cleanliness"}/>
                       </div>
 
-                      <div className='flex w-full justify-between items-center my-4'>
+                      <div className='flex w-full justify-evenly sm:justify-between items-center my-4'>
                         <MetricGaugeChart value={cityDataDetails.guestSatisfaction.toFixed(2)} label={"Guest Satisfaction"} maxValue={100} displayMode='percentage' color='#2196f3' />
                         <div className='flex flex-col gap-4'>
                           <AverageCapacity avgCapacity={cityDataDetails.personCapacity}/>
@@ -130,7 +130,7 @@ const handleCityClick = async (city) => {
 
                     <div className='border border-gray-200 my-4'/>
                     <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Distance From</h2>
-                    <div className='flex justify-between'>
+                    <div className='flex justify-evenly sm:justify-between'>
                       <AvgDistFromMetro distance={cityDataDetails.metroDist}/>
                       <AvgDistFromCityCenter distance={cityDataDetails.cityCenterDist}/>
                     </div> 
