@@ -41,9 +41,6 @@ To set up the Happy-Travels project locally, follow these steps:
     yarn add d3 d3-sankey
     ```
 
-3.  **Set up API (if applicable)**:
-    The application fetches Airbnb data via an API route (e.g., `/api/airbnb-data/[cityId]`). Ensure any backend services or data sources required by this API are correctly configured.
-
 ## Execution
 
 To run a demo of the Happy-Travels application on your local machine make sure you are in the Happy-Travels directory and have all packages installed. Then run the following command in the terminal:
