@@ -16,6 +16,7 @@ import { AverageBedrooms } from '@/components/Map/AvgBedrooms';
 import { AvgDistFromMetro } from '@/components/Map/DistFromMetro';
 import { AvgDistFromCityCenter } from '@/components/Map/DistFromCityCenter';
 import { RoomTypeDonutChart } from '@/components/Map/D3RoomType';
+import { SankeyDiagram } from '@/components/Map/D3SankeyDiagram';
 
 const EuropeMapLeafletWithNoSSR = dynamic(
   () => import('../../components/Map/Map'),
@@ -165,6 +166,7 @@ const handleCityClick = async (city) => {
                     <h2 className="text-gray-500 font-semibold text-lg mb-2">Room Type Distribution</h2>
                     <RoomTypeDonutChart data={cityDataDetails.roomTypeDistribution} title="Airbnb Room Types" />
 
+                    <SankeyDiagram data={cityDataDetails.sankeyData}/>
                   </div>
                 ) : (
                    <p className="text-gray-500">No details to display.</p>
