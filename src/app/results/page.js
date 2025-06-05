@@ -49,70 +49,69 @@ const page = () => {
 }, [topCities]);
 
   return (
-    <div className='flex flex-col items-center h-full w-full p-[30px] gap-[20px]'>
-        <ProgressBar progress={20/21}/>
-        {
-            topCities.length > 0 ?
-                <div className='flex flex-col items-center h-full w-[80%] mt-[30px] gap-[20px]'>
-                    <div className='flex w-full justify-between'>
-                        <div>
-                            <p className={`text-[#E51D51] text-[2.5vh]`}>Final Results</p>
-                            <p className='text-[5vh]'>Top city matches</p>
-                        </div>
-                        <div>
-                            <Link href={"/"}>
-                                <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
-                                    <p className='text-white text-[2vh]'>Start Over</p>
-                                </button>
-                            </Link>
-                        </div>
-                    </div>
-                    <div className='bg-[#F0F0F0] mt-[20px] w-[80%] h-[500px] rounded-2xl flex justify-center items-end gap-[10%]'>
-                        <div className='flex flex-col gap-[20px] w-[11vw] h-[37vh]'>
-                            <div className='h-[10vh] shadow w-full hover:scale-105 transition-all duration-100 ease-in-out bg-[#fff] rounded-xl flex items-center justify-center'>
-                                <p className='text-[3vh]'>{topCities[1].city}</p>
-                            </div>
-                            <div className='w-full shadow bg-[#fff] h-full rounded-t-xl flex flex-col items-center'>
-                                <p className='mt-[30px] text-[7vh] text-black'>2</p>
-                                <p className='text-[2vh] text-black'>{topCities[1].score}% match</p>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-[20px] w-[11vw] h-[50vh]'>
-                            <div className='h-[10vh] shadow w-full hover:scale-105 transition-all duration-100 ease-in-out bg-[#fff] rounded-xl flex items-center justify-center'>
-                                <p className='text-[3vh]'>{topCities[0].city}</p>
-                            </div>
-                            <div className={`w-full shadow bg-gradient-to-b from-[#E51D51] to-[#D90865] h-full rounded-t-xl flex flex-col items-center`}>
-                                <p className='mt-[30px] text-[7vh] text-white'>1</p>
-                                <p className='text-[2vh] text-white'>{topCities[0].score}% match</p>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-[20px] w-[11vw] h-[30vh]'>
-                            <div className='h-[10vh] shadow w-full hover:scale-105 transition-all duration-100 ease-in-out bg-[#fff] rounded-xl flex items-center justify-center'>
-                                <p className='text-[3vh]'>{topCities[2].city}</p>
-                            </div>
-                            <div className='w-full shadow bg-[#fff] h-full rounded-t-xl flex flex-col items-center'>
-                                <p className='mt-[30px] text-[7vh] text-black'>3</p>
-                                <p className='text-[2vh] text-black'>{topCities[2].score}% match</p>
-                            </div>
-                        </div>
-                    </div>
-                    <Link
-                    href={{
-                        pathname: "/map",
-                        query: {
-                        ...Object.fromEntries(searchParams.entries()),
-                        top1: topCities[0]?.city,
-                        top2: topCities[1]?.city,
-                        top3: topCities[2]?.city,
-                        }}}>
-                        <button className={`h-[5vh] w-[11vh] mt-[20px] cursor-pointer hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} rounded-full shadow-md`}>
-                            <p className='text-white text-[2vh]'>To map</p>
-                        </button>
-                    </Link>
+    <div className='relative flex flex-col items-center min-h-screen w-full bg-white'>
+      {/* Top right buttons */}
+      <div className="absolute top-8 right-8 flex items-center gap-4 z-20">
+        <Link href="/">
+          <span className="text-black text-sm font-normal cursor-pointer hover:underline">Start over</span>
+        </Link>
+        <Link href={{ pathname: "/map", query: topCities.length >= 3 ? {
+          top1: topCities[0]?.city,
+          top2: topCities[1]?.city,
+          top3: topCities[2]?.city,
+        } : {} }}>
+          <button className="bg-[#E51D51] hover:bg-[#c21844] text-white px-5 py-2 rounded-full text-sm font-medium shadow transition-all duration-200 focus:outline-none">View Map</button>
+        </Link>
+      </div>
+
+      {/* Main content */}
+      <div className='flex flex-col items-center w-full max-w-5xl mt-20 mb-10'>
+        <div className='w-full flex flex-col items-start mb-6'>
+          <span className='text-[#E51D51] text-base font-medium mb-1'>Final Result</span>
+          <h1 className='text-4xl font-semibold text-black'>Top city matches</h1>
+        </div>
+        {topCities.length > 0 ? (
+          <div className='w-full flex flex-col items-center'>
+            {/* Podium */}
+            <div className='bg-[#F0F0F0] w-full max-w-4xl h-[340px] rounded-2xl flex justify-center items-end gap-8 shadow-sm mb-12'>
+              {/* 2nd place */}
+              <div className='flex flex-col gap-3 w-40 h-60 items-center'>
+                <div className='h-12 w-full shadow bg-white rounded-xl flex items-center justify-center text-lg font-medium'>{topCities[1].city}</div>
+                <div className='w-full shadow bg-white h-full rounded-t-xl flex flex-col items-center justify-end pb-4'>
+                  <span className='text-4xl text-black mb-1'>2</span>
+                  <span className='text-xs text-black'>{topCities[1].score}% match</span>
                 </div>
-            :
-                <p>Loading...</p>
-        }
+              </div>
+              {/* 1st place */}
+              <div className='flex flex-col gap-3 w-40 h-80 items-center'>
+                <div className='h-12 w-full shadow bg-white rounded-xl flex items-center justify-center text-lg font-medium'>{topCities[0].city}</div>
+                <div className='w-full shadow bg-gradient-to-b from-[#E51D51] to-[#D90865] h-full rounded-t-xl flex flex-col items-center justify-end pb-4'>
+                  <span className='text-4xl text-white mb-1'>1</span>
+                  <span className='text-xs text-white'>{topCities[0].score}% match</span>
+                </div>
+              </div>
+              {/* 3rd place */}
+              <div className='flex flex-col gap-3 w-40 h-44 items-center'>
+                <div className='h-12 w-full shadow bg-white rounded-xl flex items-center justify-center text-lg font-medium'>{topCities[2].city}</div>
+                <div className='w-full shadow bg-white h-full rounded-t-xl flex flex-col items-center justify-end pb-4'>
+                  <span className='text-4xl text-black mb-1'>3</span>
+                  <span className='text-xs text-black'>{topCities[2].score}% match</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p>Loading...</p>
+        )}
+        {/* Thank you card */}
+        <div className="w-full max-w-4xl mt-8 bg-white border border-[#E5E7EB] rounded-2xl flex items-center justify-between p-8 shadow-sm">
+          <div className="flex flex-col items-start justify-center">
+            <span className="text-2xl font-semibold text-black mb-2">Thank you for participating</span>
+            <span className="text-sm text-gray-500">We hope you enjoyed the experience and found your perfect city match!</span>
+          </div>
+          <img src="/arc.png" alt="Arc de Triomphe" className="w-32 h-24 object-contain ml-8" />
+        </div>
+      </div>
     </div>
   )
 }

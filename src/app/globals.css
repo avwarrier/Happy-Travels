@@ -28,6 +28,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.no-horizontal-scroll {
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
 .airbnb-gradient {
   background: linear-gradient(91deg, var(--airbnb-start) 16.18%, var(--airbnb-end) 86.55%);
 }

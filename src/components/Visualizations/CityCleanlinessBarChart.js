@@ -30,14 +30,14 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
           let cityScores = [];
           try {
             const [weekdayData, weekendData] = await Promise.all([
-              d3.csv(weekdayPath),
-              d3.csv(weekendPath)
+              d3.csv(weekdayPath),  // Load CSV data for weekdays
+              d3.csv(weekendPath)   // Load CSV data for weekends
             ]);
             if (weekdayData) weekdayData.forEach(d => { const score = parseFloat(d.cleanliness_rating); if (!isNaN(score)) { cityScores.push(score); allScoresForGrandAverage.push(score); } });
             if (weekendData) weekendData.forEach(d => { const score = parseFloat(d.cleanliness_rating); if (!isNaN(score)) { cityScores.push(score); allScoresForGrandAverage.push(score); } });
             
             if (cityScores.length > 0) {
-              const cityAvg = d3.mean(cityScores);
+              const cityAvg = d3.mean(cityScores);  // Calculate average using D3's mean function
               processedCityAverages.push({ city: city.charAt(0).toUpperCase() + city.slice(1), average: cityAvg });
             } else {
               console.warn(`No cleanliness data for ${city}`);
@@ -53,7 +53,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         setCityAverageCleanlinessData(processedCityAverages);
 
         if (allScoresForGrandAverage.length > 0) {
-          setGrandAverageCleanliness(d3.mean(allScoresForGrandAverage) || 0);
+          setGrandAverageCleanliness(d3.mean(allScoresForGrandAverage) || 0);  // Calculate grand average
         } else {
           setGrandAverageCleanliness(0);
         }
@@ -102,17 +102,45 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .attr('height', containerHeight)
       .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
+    
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.bottom - 55)
+      .attr('fill', '#000')
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('opacity', 0)
+      .text('Median Cleanliness Score')
+      .transition()
+      .duration(800)
+      .style('opacity', 1);
 
-    const x = d3.scaleBand()
+    // Create tooltip using D3
+    const tooltip = d3.select(d3Container.current)
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('border-radius', '8px')
+      .style('padding', '12px')
+      .style('box-shadow', '0 4px 6px rgba(0, 0, 0, 0.1)')
+      .style('font-size', '12px')
+      .style('pointer-events', 'none')
+      .style('transition', 'opacity 0.2s ease-in-out')
+      .style('z-index', 1000);
+
+    // D3 scales for data mapping
+    const x = d3.scaleBand()  // Create band scale for city names
       .domain(cityAverageCleanlinessData.map(d => d.city))
       .range([0, width])
-      .padding(0.5); // Adjust padding for dots
+      .padding(0.5);
 
-    // Determine dynamic Y-axis domain
+    // Dynamic Y-axis domain calculation using D3
     let yAxisMin = 0;
     const allAverages = cityAverageCleanlinessData.map(d => d.average);
     if (allAverages.length > 0) {
-      const minDataVal = d3.min(allAverages);
+      const minDataVal = d3.min(allAverages);  // Get minimum value
       if (minDataVal !== undefined) { // Ensure minDataVal is a number
         yAxisMin = Math.max(0, minDataVal - 1); // Start 1 unit below min, but not less than 0
       }
@@ -124,86 +152,215 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
     }
     if (yAxisMin >= 9 && d3.max(allAverages) === 10 && d3.min(allAverages) === 10) yAxisMin = 9; // if all are 10, show 9-10
 
-    const y = d3.scaleLinear()
-      .domain([yAxisMin, 10]) // Dynamic min, fixed max at 10
+    const y = d3.scaleLinear()  // Create linear scale for cleanliness scores
+      .domain([yAxisMin, 10])
       .range([height, 0]);
 
-    // X-axis
+    // Create and style X-axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x))  // Create bottom axis
       .selectAll('text')
         .style('text-anchor', 'end')
         .attr('dx', '-.8em')
         .attr('dy', '.15em')
         .attr('transform', 'rotate(-45)')
         .style('font-size', '10px')
-        .style('fill', '#191919');
+        .style('fill', '#191919')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .style('opacity', 1);
 
-    // Y-axis
+    // Create and style Y-axis
     svg.append('g')
-      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d))
-      .selectAll('text').style('font-size', '10px')
-      .style('fill', '#191919');
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d))  // Create left axis with 5 ticks
+      .selectAll('text')
+        .style('font-size', '10px')
+        .style('fill', '#191919')
+        .style('opacity', 0)
+        .transition()
+        .duration(800)
+        .style('opacity', 1);
 
-    // Lollipop sticks (vertical lines)
+    // Create lollipop sticks with D3 transitions
     svg.selectAll('.stick')
       .data(cityAverageCleanlinessData)
       .join('line')
         .attr('class', 'stick')
-        .attr('x1', d => x(d.city) + x.bandwidth() / 2) // Center of the band
+        .attr('x1', d => x(d.city) + x.bandwidth() / 2)
         .attr('x2', d => x(d.city) + x.bandwidth() / 2)
-        .attr('y1', height) // Start from x-axis
-        .attr('y2', d => y(d.average))
+        .attr('y1', height)
+        .attr('y2', height) // Start from bottom
         .attr('stroke', '#ccc')
-        .attr('stroke-width', 1);
+        .attr('stroke-width', 1)
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 180)
+        .ease(d3.easeCubicInOut)
+        .attr('y2', d => y(d.average));
 
-    // Dots
+    // Create dots with D3 transitions and interactions
     svg.selectAll('.dot')
       .data(cityAverageCleanlinessData)
       .join('circle')
         .attr('class', 'dot')
-        .attr('cx', d => x(d.city) + x.bandwidth() / 2) // Center of the band
-        .attr('cy', d => y(d.average))
-        .attr('r', 5) // Radius of the dot
+        .attr('cx', d => x(d.city) + x.bandwidth() / 2)
+        .attr('cy', height) // Start from bottom
+        .attr('r', 0) // Start with radius 0
         .attr('fill', d => {
           if (d.average < userMinCleanliness) return '#A9A9A9';
           if (d.average >= grandAverageCleanliness) return '#E51D51';
           return '#D90865';
-        });
+        })
+        .style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('r', 7); // Slightly larger on hover
 
-    // Horizontal line for userMinCleanliness
-    if (userMinCleanliness !== null && y(userMinCleanliness) >=0 && y(userMinCleanliness) <= height) {
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 1);
+
+          const isAboveMin = d.average >= userMinCleanliness;
+          const isAboveAvg = d.average >= grandAverageCleanliness;
+          const diffFromMin = Math.abs(d.average - userMinCleanliness).toFixed(1);
+          const diffFromAvg = Math.abs(d.average - grandAverageCleanliness).toFixed(1);
+          
+          tooltip.html(`
+            <div style="font-weight: 500; color: #191919; margin-bottom: 4px;">${d.city}</div>
+            <div style="color: #666; margin-bottom: 2px;">Cleanliness Score: ${d.average.toFixed(1)}/10</div>
+            <div style="color: ${isAboveMin ? '#2E7D32' : '#D32F2F'}">
+              ${isAboveMin 
+                ? `✓ ${diffFromMin} points above your minimum`
+                : `✗ ${diffFromMin} points below your minimum`
+              }
+            </div>
+            <div style="color: ${isAboveAvg ? '#2E7D32' : '#D32F2F'}">
+              ${isAboveAvg 
+                ? `✓ ${diffFromAvg} points above typical average`
+                : `✗ ${diffFromAvg} points below typical average`
+              }
+            </div>
+          `)
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('r', 5);
+
+          tooltip.transition()
+            .duration(200)
+            .style('opacity', 0);
+        })
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 180 + 120)
+        .ease(d3.easeCubicInOut)
+        .attr('cy', d => y(d.average))
+        .attr('r', 5);
+
+    // Create city labels with D3 transitions
+    svg.selectAll('.dot-label')
+      .data(cityAverageCleanlinessData)
+      .join('text')
+        .attr('class', 'dot-label')
+        .attr('x', d => x(d.city) + x.bandwidth() / 2 + 8)
+        .attr('y', height)
+        .attr('text-anchor', 'start')
+        .style('font-size', '10px')
+        .style('fill', '#191919')
+        .style('opacity', 0)
+        .text(d => d.average.toFixed(1))
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 180 + 300)
+        .ease(d3.easeCubicInOut)
+        .attr('y', d => y(d.average) + 3)
+        .style('opacity', 1);
+
+    // Create horizontal line for minimum cleanliness with D3 transitions
+    if (userMinCleanliness !== null && y(userMinCleanliness) >= 0 && y(userMinCleanliness) <= height) {
       svg.append('line')
-        .attr('x1', 0).attr('y1', y(userMinCleanliness))
-        .attr('x2', width).attr('y2', y(userMinCleanliness))
-        .attr('stroke', '#555555').attr('stroke-width', 2).attr('stroke-dasharray', '5,5');
+        .attr('x1', 0)
+        .attr('y1', height) // Start from bottom
+        .attr('x2', 0) // Start from left
+        .attr('y2', height)
+        .attr('stroke', '#555555')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '5,5')
+        .transition()
+        .duration(800)
+        .ease(d3.easeCubicInOut)
+        .attr('x2', width)
+        .attr('y1', y(userMinCleanliness))
+        .attr('y2', y(userMinCleanliness));
+
       svg.append('text')
-        .attr('x', width - 5).attr('y', y(userMinCleanliness) - 5)
-        .attr('text-anchor', 'end').style('font-size', '10px').style('fill', '#191919')
-        .text(`Your min: ${userMinCleanliness.toFixed(1)}`);
+        .attr('x', width - 5)
+        .attr('y', height) // Start from bottom
+        .attr('text-anchor', 'end')
+        .style('font-size', '10px')
+        .style('fill', '#191919')
+        .style('opacity', 0)
+        .text(`Your min: ${userMinCleanliness.toFixed(1)}`)
+        .transition()
+        .duration(800)
+        .delay(400)
+        .attr('y', y(userMinCleanliness) - 5)
+        .style('opacity', 1);
     }
     
-    // Horizontal line for Grand Average Cleanliness
-    if (grandAverageCleanliness > 0 && y(grandAverageCleanliness) >=0 && y(grandAverageCleanliness) <= height) {
-        svg.append('line')
-          .attr('x1', 0).attr('y1', y(grandAverageCleanliness))
-          .attr('x2', width).attr('y2', y(grandAverageCleanliness))
-          .attr('stroke', '#555555').attr('stroke-width', 1.5).attr('stroke-dasharray', '2,2');
-        svg.append('text')
-          .attr('x', 5).attr('y', y(grandAverageCleanliness) - 5)
-          .attr('text-anchor', 'start').style('font-size', '10px').style('fill', '#555555')
-          .text(`Typical Avg: ${grandAverageCleanliness.toFixed(1)}`);
+    // Create horizontal line for grand average with D3 transitions
+    if (grandAverageCleanliness > 0 && y(grandAverageCleanliness) >= 0 && y(grandAverageCleanliness) <= height) {
+      svg.append('line')
+        .attr('x1', 0)
+        .attr('y1', height) // Start from bottom
+        .attr('x2', 0) // Start from left
+        .attr('y2', height)
+        .attr('stroke', '#555555')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-dasharray', '2,2')
+        .transition()
+        .duration(800)
+        .ease(d3.easeCubicInOut)
+        .attr('x2', width)
+        .attr('y1', y(grandAverageCleanliness))
+        .attr('y2', y(grandAverageCleanliness));
+
+      svg.append('text')
+        .attr('x', 5)
+        .attr('y', height) // Start from bottom
+        .attr('text-anchor', 'start')
+        .style('font-size', '10px')
+        .style('fill', '#555555')
+        .style('opacity', 0)
+        .text(`Typical Avg: ${grandAverageCleanliness.toFixed(1)}`)
+        .transition()
+        .duration(800)
+        .delay(400)
+        .attr('y', y(grandAverageCleanliness) - 5)
+        .style('opacity', 1);
     }
 
+    // Clean up tooltip on unmount
+    return () => {
+      tooltip.remove();
+    };
   }, [loading, error, cityAverageCleanlinessData, userMinCleanliness, grandAverageCleanliness]);
 
   return (
     <div className="w-full h-full flex flex-col items-start justify-start p-0">
       <p className="text-[14px] font-normal mb-2 text-[#E51D51]">Insight</p>
-      <h2 className="text-[40px] font-normal text-black mb-8 leading-tight">
+      <h2 className="text-[40px] font-normal text-black mb-2 leading-tight">
         {loading ? 'Calculating...' : error ? 'Error loading data.' : `${passPercentage}% of cities hit that sparkle level.`}
       </h2>
+      <p className="text-[16px] text-gray-500 mb-8 -mt-2">Hover over the data for more information</p>
 
       {loading && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal">Loading visualization...</p></div>}
       {error && <div className="w-full h-[300px] flex justify-center items-center bg-gray-100 rounded-lg shadow"><p className="text-base font-normal text-red-500 p-4 text-center">{error}</p></div>}
