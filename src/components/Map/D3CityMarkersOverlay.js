@@ -79,7 +79,7 @@ const D3CityMarkersLayer = ({ cities, onCityClick, selectedCityId, topCities = [
           if (topCities[1] === d.name) return '#6366f1';
           if (topCities[2] === d.name) return '#10b981';
 
-          return '#3b82f6';
+          return '#D90865';
         })
         .style("fill-opacity", 0.7)
 

@@ -60,7 +60,7 @@ const EuropeMapLeaflet = ({ cities, onCityClick, selectedCityId }) => {
           <span>3rd place - Good match</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3b82f6' }} />
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#D90865' }} />
           <span>Other cities</span>
         </div>
         <div className="flex items-center space-x-2">

@@ -83,28 +83,32 @@ const handleCityClick = async (city) => {
 
       <ProgressBar progress={21/21}/>
       <main className="min-h-screen bg-white flex flex-col items-center mt-4 p-4">
-        <header className="w-full max-w-6xl mb-8 text-center">
-          <div className='flex w-full justify-between'>
-
-            <Link href={`/results?${queryString}`}>
-              <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
-                <p className='text-white text-[2vh]'>back to results</p>
-              </button>
-            </Link>
-            <h1 className="text-3xl md:text-4xl text-[5vh] text-gray-800">
+        <header className="w-full max-w-7xl mb-8 text-center flex justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl text-start text-[5vh] text-gray-800">
               European Airbnb Data (D3 Visualization)
             </h1>
+
+            <p className="text-md md:text-lg text-start text-[#E51D51]">
+              Click a city marker to explore its Airbnb summary.
+            </p>
+          </div>
+
+          <div className='flex justify-end gap-8'>
+            <Link href={`/results?${queryString}`}>
+              <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out cursor-pointer`}>
+                <p className='text-black text-[2vh]'>back to results</p>
+              </button>
+            </Link>
+
             <Link href={"/"}>
                 <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
-                    <p className='text-white text-[2vh]'>back to quiz</p>
+                    <p className='text-white text-[2vh]'>Start Over</p>
                 </button>
             </Link>
           </div>
-
-          <p className="text-md md:text-lg text-[#E51D51]">
-            Click a city marker to explore its Airbnb summary.
-          </p>
         </header>
+
 
         <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 h-[600px]">
           <div className="lg:flex-grow bg-white p-1 rounded-xl overflow-hidden">
