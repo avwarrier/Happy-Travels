@@ -62,7 +62,7 @@ const page = () => {
                         <div>
                             <Link href={"/"}>
                                 <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
-                                    <p className='text-white text-[2vh]'>back to quiz</p>
+                                    <p className='text-white text-[2vh]'>Start Over</p>
                                 </button>
                             </Link>
                         </div>
