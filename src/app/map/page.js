@@ -95,16 +95,14 @@ const handleCityClick = async (city) => {
             </p>
           </div>
 
-          <div className='flex justify-end gap-8'>
-            <Link href={`/results?${queryString}`}>
-              <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out cursor-pointer`}>
-                <p className='text-black text-[2vh]'>back to results</p>
-              </button>
+        <div className="absolute top-8 right-8 flex items-center gap-4 z-20">
+            <Link href="/">
+              <span className="text-black text-sm font-normal cursor-pointer hover:underline">Start over</span>
             </Link>
 
-            <Link href={"/"}>
-                <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
-                    <p className='text-white text-[2vh]'>Start Over</p>
+            <Link href={`/results?${queryString}`}>
+                <button className="bg-[#E51D51] hover:bg-[#c21844] text-white px-5 py-2 rounded-full text-sm font-medium shadow transition-all duration-200 focus:outline-none">
+                    <p className='text-white text-[2vh]'>Results</p>
                 </button>
             </Link>
           </div>
