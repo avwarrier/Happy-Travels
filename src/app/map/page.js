@@ -3,6 +3,9 @@ import Head from 'next/head';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import ProgressBar from '@/components/ProgressBar'
 
 import { europeanCities } from '@/components/Map/cityCoords';
 import { DataExaminedBarChart } from '@/components/Map/D3DataExaminedBarChart';
@@ -13,13 +16,14 @@ import { AverageBedrooms } from '@/components/Map/AvgBedrooms';
 import { AvgDistFromMetro } from '@/components/Map/DistFromMetro';
 import { AvgDistFromCityCenter } from '@/components/Map/DistFromCityCenter';
 import { RoomTypeDonutChart } from '@/components/Map/D3RoomType';
+import { SankeyDiagram } from '@/components/Map/D3SankeyDiagram';
 
 const EuropeMapLeafletWithNoSSR = dynamic(
   () => import('../../components/Map/Map'),
   {
     ssr: false,
     loading: () => <div 
-    style={{ height: '700px', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    style={{ height: '600px', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       Loading Map...</div>
   }
 );
@@ -28,6 +32,10 @@ export default function MapPage() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [cityDataDetails, setCityDataDetails] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const gradient = "bg-gradient-to-r from-[#E51D51] to-[#D90865]"
+
+  const searchParams = useSearchParams();
+  const queryString = searchParams?.toString() ?? '';
 
 const handleCityClick = async (city) => {
   console.log('D3 City Marker clicked:', city);
@@ -74,18 +82,37 @@ const handleCityClick = async (city) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-h-screen bg-gray-100 flex flex-col items-center p-4 font-sans">
-        <header className="w-full max-w-6xl mb-6 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-            European Airbnb Data (D3 Visualization)
-          </h1>
-          <p className="text-md md:text-lg text-gray-600 mt-2">
-            Click a city marker to explore its Airbnb summary.
-          </p>
+      <ProgressBar progress={21/21}/>
+      <main className="min-h-screen bg-white flex flex-col items-center mt-4 p-4">
+        <header className="w-full max-w-7xl mb-8 text-center flex justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl text-start text-[5vh] text-gray-800">
+              European Airbnb Data (D3 Visualization)
+            </h1>
+
+            <p className="text-md md:text-lg text-start text-[#E51D51]">
+              Click a city marker to explore its Airbnb summary.
+            </p>
+          </div>
+
+          <div className='flex justify-end gap-8'>
+            <Link href={`/results?${queryString}`}>
+              <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out cursor-pointer`}>
+                <p className='text-black text-[2vh]'>back to results</p>
+              </button>
+            </Link>
+
+            <Link href={"/"}>
+                <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
+                    <p className='text-white text-[2vh]'>Start Over</p>
+                </button>
+            </Link>
+          </div>
         </header>
 
-        <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4">
-          <div className="lg:flex-grow bg-white p-1 rounded-xl shadow-2xl overflow-hidden">
+
+        <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 h-[600px]">
+          <div className="lg:flex-grow bg-white p-1 rounded-xl overflow-hidden">
             <EuropeMapLeafletWithNoSSR
               cities={europeanCities}
               onCityClick={handleCityClick}
@@ -94,7 +121,7 @@ const handleCityClick = async (city) => {
           </div>
 
           {/* Data Display Panel */}
-          <aside className="lg:w-1/3 xl:w-1/4 bg-white p-5 rounded-xl shadow-2xl lg:max-h-[700px] overflow-y-auto text-gray-900">
+          <aside className="lg:w-1/3 xl:w-1/4 bg-white p-5 rounded-xl border border-gray-100 lg:max-h-[700px] overflow-y-auto text-gray-900">
             {selectedCity ? (
               <>
                 <h2 className="text-xl font-semibold mb-5">
@@ -114,12 +141,12 @@ const handleCityClick = async (city) => {
 
                     <div>
                       <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Metrics</h2>
-                      <div className='flex w-full justify-between items-center'>
+                      <div className='flex w-full justify-evenly sm:justify-between items-center'>
                         <AverageCost avgCost={cityDataDetails.avgCost.avgTotalCityCost} weekdayAvgCost={cityDataDetails.avgCost.avgWeekdayCost} weekendAvgCost={cityDataDetails.avgCost.avgWeekendCost}/>
                         <MetricGaugeChart value={cityDataDetails.avgCleanliness.combined?.toFixed(2)} label={"Cleanliness"}/>
                       </div>
 
-                      <div className='flex w-full justify-between items-center my-4'>
+                      <div className='flex w-full justify-evenly sm:justify-between items-center my-4'>
                         <MetricGaugeChart value={cityDataDetails.guestSatisfaction.toFixed(2)} label={"Guest Satisfaction"} maxValue={100} displayMode='percentage' color='#2196f3' />
                         <div className='flex flex-col gap-4'>
                           <AverageCapacity avgCapacity={cityDataDetails.personCapacity}/>
@@ -130,7 +157,7 @@ const handleCityClick = async (city) => {
 
                     <div className='border border-gray-200 my-4'/>
                     <h2 className="text-gray-500 font-semibold text-lg mb-2">Average Distance From</h2>
-                    <div className='flex justify-between'>
+                    <div className='flex justify-evenly sm:justify-between'>
                       <AvgDistFromMetro distance={cityDataDetails.metroDist}/>
                       <AvgDistFromCityCenter distance={cityDataDetails.cityCenterDist}/>
                     </div> 
@@ -139,6 +166,7 @@ const handleCityClick = async (city) => {
                     <h2 className="text-gray-500 font-semibold text-lg mb-2">Room Type Distribution</h2>
                     <RoomTypeDonutChart data={cityDataDetails.roomTypeDistribution} title="Airbnb Room Types" />
 
+                    <SankeyDiagram data={cityDataDetails.sankeyData}/>
                   </div>
                 ) : (
                    <p className="text-gray-500">No details to display.</p>

@@ -3,6 +3,25 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useMap } from 'react-leaflet';
 
+/**
+ * A React component that integrates with Leaflet to render and manage
+ * custom city markers using D3.js. It draws interactive circles and labels for cities
+ * directly onto Leaflet's overlay pane, updating their positions on map zoom/pan.
+ * This component provides a dynamic and D3-powered way to display map markers.
+ *
+ * @param {object} props - The component's props.
+ * @param {Array<{id: string, name: string, coordinates: [number, number]}>} props.cities - Array of city objects to display.
+ * Each city object should have an `id`, `name`, and `coordinates` ( [latitude, longitude] ).
+ * @param {function} props.onCityClick - Callback function triggered when a city marker is clicked.
+ * Receives the city data object as an argument.
+ * @param {string|null} props.selectedCityId - The ID of the currently selected city. This city's
+ * marker will be styled differently to indicate selection.
+ * @param {Array<string>} [props.topCities=[]] - An optional array of city names to highlight with distinct colors,
+ * typically representing top-ranked cities from a recommendation.
+ * @returns {null} This component renders directly into the Leaflet map's overlay pane
+ * and does not return any direct JSX elements.
+ */
+
 const D3CityMarkersLayer = ({ cities, onCityClick, selectedCityId, topCities = [] }) => {
   const map = useMap();
   const svgLayerRef = useRef(null); // Holds the D3-managed SVG element
@@ -79,7 +98,7 @@ const D3CityMarkersLayer = ({ cities, onCityClick, selectedCityId, topCities = [
           if (topCities[1] === d.name) return '#6366f1';
           if (topCities[2] === d.name) return '#10b981';
 
-          return '#3b82f6';
+          return '#D90865';
         })
         .style("fill-opacity", 0.7)
 

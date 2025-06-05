@@ -80,7 +80,7 @@ export const DataExaminedBarChart = ({ weekdayRows, weekendRows, totalListings }
       .attr('y', d => y(d.value))
       .attr('width', x.bandwidth())
       .attr('height', d => chartHeight - y(d.value))
-      .attr('fill', (d) => d.label === 'Weekday' ? '#3B82F6' : '#FACC15')
+      .attr('fill', (d) => d.label === 'Weekday' ? '#FF8DA0' : '#D90865')
       .attr('rx', 4)
       .attr('ry', 4)
       .style('transition', 'opacity 0.2s ease-in-out');

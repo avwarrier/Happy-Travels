@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getCityMatch } from '@/util/functions'
 import Link from 'next/link'
+import ProgressBar from '@/components/ProgressBar'
 
 const page = () => {
     const searchParams = useSearchParams()
