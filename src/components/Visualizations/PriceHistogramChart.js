@@ -23,8 +23,8 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
           const weekendPath = `/data/${city}_weekends.csv`;
           try {
             const [weekdayData, weekendData] = await Promise.all([
-              d3.csv(weekdayPath),
-              d3.csv(weekendPath)
+              d3.csv(weekdayPath),  // Load CSV data for weekdays
+              d3.csv(weekendPath)   // Load CSV data for weekends
             ]);
             
             const combinedPrices = [];
@@ -35,7 +35,7 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
               console.warn(`No valid price data for ${city}`);
               return { city, medianPrice: null };
             }
-            const median = d3.median(combinedPrices);
+            const median = d3.median(combinedPrices);  // Calculate median price using D3
             return { city: city.charAt(0).toUpperCase() + city.slice(1), medianPrice: median };
           } catch (cityError) {
             console.error(`Error fetching data for ${city}:`, cityError);
@@ -109,7 +109,7 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
       .duration(800)
       .style('opacity', 1);
 
-    // Add tooltip div
+    // Create tooltip using D3
     const tooltip = d3.select(d3Container.current)
       .append('div')
       .attr('class', 'tooltip')
@@ -124,20 +124,21 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
       .style('transition', 'opacity 0.2s ease-in-out')
       .style('z-index', 1000);
 
-    const x = d3.scaleBand()
+    // Create scales for data mapping
+    const x = d3.scaleBand()  // Create band scale for city names
       .domain(cityMedianPrices.map(d => d.city))
       .range([0, width])
       .padding(0.2);
 
-    const yMax = d3.max(cityMedianPrices, d => d.medianPrice);
-    const y = d3.scaleLinear()
+    const yMax = d3.max(cityMedianPrices, d => d.medianPrice);  // Get maximum price
+    const y = d3.scaleLinear()  // Create linear scale for prices
       .domain([0, d3.max([yMax, userMaxPrice]) * 1.1 || 100])
       .range([height, 0]);
 
-    // X-axis with animation
+    // Create and style X-axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x))  // Create bottom axis
       .selectAll('text')
         .style('text-anchor', 'end')
         .attr('dx', '-.8em')
@@ -149,9 +150,9 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
         .duration(800)
         .style('opacity', 1);
 
-    // Y-axis with animation
+    // Create and style Y-axis
     svg.append('g')
-      .call(d3.axisLeft(y).tickFormat(d => `€${d}`))
+      .call(d3.axisLeft(y).tickFormat(d => `€${d}`))  // Create left axis with euro format
       .selectAll('text')
         .style('font-size', '10px')
         .style('opacity', 0)
@@ -159,7 +160,7 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
         .duration(800)
         .style('opacity', 1);
 
-    // Bars with animation
+    // Create bars with D3 transitions and interactions
     svg.selectAll('.bar')
       .data(cityMedianPrices)
       .join('rect')
@@ -224,7 +225,7 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
         .attr('y', d => y(d.medianPrice))
         .attr('height', d => height - y(d.medianPrice));
 
-    // Value labels with staggered animation (optional, if you want to add)
+    // Create value labels with D3 transitions
     svg.selectAll('.bar-label')
       .data(cityMedianPrices)
       .join('text')
@@ -243,7 +244,7 @@ const PriceHistogramChart = ({ userMaxPrice }) => {
         .attr('y', d => y(d.medianPrice) - 5)
         .style('opacity', 1);
 
-    // Horizontal cutoff line with animation
+    // Create price cutoff line with D3 transitions
     if (userMaxPrice !== null && userMaxPrice !== undefined && y(userMaxPrice) >= 0 && y(userMaxPrice) <= height) {
       svg.append('line')
         .attr('x1', 0)

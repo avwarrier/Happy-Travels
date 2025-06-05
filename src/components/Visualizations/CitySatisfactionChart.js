@@ -26,8 +26,8 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
           let cityScores = [];
           try {
             const [weekdayData, weekendData] = await Promise.all([
-              d3.csv(weekdayPath),
-              d3.csv(weekendPath)
+              d3.csv(weekdayPath),  // Load CSV data for weekdays
+              d3.csv(weekendPath)   // Load CSV data for weekends
             ]);
             const extractScores = (data) => {
               if (data) {
@@ -40,7 +40,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
             extractScores(weekdayData);
             extractScores(weekendData);
             if (cityScores.length > 0) {
-              const avgScore = d3.mean(cityScores);
+              const avgScore = d3.mean(cityScores);  // Calculate average satisfaction score
               processedData.push({ city: city.charAt(0).toUpperCase() + city.slice(1), averageSatisfaction: avgScore });
             } else {
               console.warn(`No guest_satisfaction_overall data for ${city}`);
@@ -105,7 +105,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
       .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Add tooltip div
+    // Create tooltip using D3
     const tooltip = d3.select(d3Container.current)
       .append('div')
       .attr('class', 'tooltip')
@@ -120,9 +120,10 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
       .style('transition', 'opacity 0.2s ease-in-out')
       .style('z-index', 1000);
 
+    // Calculate data bounds using D3
     const allScores = cityData.map(d => d.averageSatisfaction);
-    const dataMinScore = d3.min(allScores) ?? 0;
-    const dataMaxScore = d3.max(allScores) ?? 100;
+    const dataMinScore = d3.min(allScores) ?? 0;  // Get minimum score
+    const dataMaxScore = d3.max(allScores) ?? 100;  // Get maximum score
 
     // Dynamic X-axis domain
     let xDomainMin = Math.min(dataMinScore, userMinSatisfaction);
@@ -138,20 +139,21 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
       xDomainMax = Math.min(100, xDomainMax + 5);
     }
 
-    const x = d3.scaleLinear()
+    // Create scales for data mapping
+    const x = d3.scaleLinear()  // Create linear scale for satisfaction scores
       .domain([xDomainMin, xDomainMax])
       .range([0, width]);
 
-    const y = d3.scaleBand()
+    const y = d3.scaleBand()  // Create band scale for city names
       .domain(cityData.map(d => d.city))
       .range([0, chartHeight])
-      .paddingInner(barPadding / (barHeight + barPadding)) // Calculate padding based on desired px
+      .paddingInner(barPadding / (barHeight + barPadding))
       .paddingOuter(0.1);
 
-    // X-axis with animation
+    // Create and style X-axis
     svg.append('g')
       .attr('transform', `translate(0,${chartHeight})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d.toFixed(0)}`))
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d.toFixed(0)}`))  // Create bottom axis with 5 ticks
       .selectAll('text')
         .style('opacity', 0)
         .transition()
@@ -170,9 +172,9 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
       .duration(800)
       .style('opacity', 1);
         
-    // Y-axis (City Names) with animation
+    // Create and style Y-axis
     svg.append('g')
-      .call(d3.axisLeft(y))
+      .call(d3.axisLeft(y))  // Create left axis for city names
       .selectAll('text')
         .style('opacity', 0)
         .transition()
@@ -180,7 +182,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
         .delay((d, i) => i * 100) // Stagger the animations
         .style('opacity', 1);
 
-    // Bars with animation
+    // Create bars with D3 transitions and interactions
     svg.selectAll('.bar')
       .data(cityData)
       .join('rect')
@@ -246,7 +248,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
         .ease(d3.easeCubicInOut)
         .attr('width', d => x(d.averageSatisfaction) - x(xDomainMin > 0 ? xDomainMin: 0));
 
-    // Value Labels with animation
+    // Create value labels with D3 transitions
     svg.selectAll('.bar-label')
       .data(cityData)
       .join('text')
@@ -266,7 +268,7 @@ const CitySatisfactionChart = ({ userMinSatisfaction }) => {
         .attr('x', d => x(d.averageSatisfaction) + 5)
         .style('opacity', 1);
 
-    // User Min Satisfaction Line with animation
+    // Create minimum satisfaction line with D3 transitions
     if (userMinSatisfaction >= xDomainMin && userMinSatisfaction <= xDomainMax) {
       svg.append('line')
         .attr('x1', x(xDomainMin > 0 ? xDomainMin: 0)) // Start from left

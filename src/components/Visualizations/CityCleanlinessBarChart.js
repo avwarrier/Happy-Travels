@@ -30,14 +30,14 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
           let cityScores = [];
           try {
             const [weekdayData, weekendData] = await Promise.all([
-              d3.csv(weekdayPath),
-              d3.csv(weekendPath)
+              d3.csv(weekdayPath),  // Load CSV data for weekdays
+              d3.csv(weekendPath)   // Load CSV data for weekends
             ]);
             if (weekdayData) weekdayData.forEach(d => { const score = parseFloat(d.cleanliness_rating); if (!isNaN(score)) { cityScores.push(score); allScoresForGrandAverage.push(score); } });
             if (weekendData) weekendData.forEach(d => { const score = parseFloat(d.cleanliness_rating); if (!isNaN(score)) { cityScores.push(score); allScoresForGrandAverage.push(score); } });
             
             if (cityScores.length > 0) {
-              const cityAvg = d3.mean(cityScores);
+              const cityAvg = d3.mean(cityScores);  // Calculate average using D3's mean function
               processedCityAverages.push({ city: city.charAt(0).toUpperCase() + city.slice(1), average: cityAvg });
             } else {
               console.warn(`No cleanliness data for ${city}`);
@@ -53,7 +53,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         setCityAverageCleanlinessData(processedCityAverages);
 
         if (allScoresForGrandAverage.length > 0) {
-          setGrandAverageCleanliness(d3.mean(allScoresForGrandAverage) || 0);
+          setGrandAverageCleanliness(d3.mean(allScoresForGrandAverage) || 0);  // Calculate grand average
         } else {
           setGrandAverageCleanliness(0);
         }
@@ -115,7 +115,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
       .duration(800)
       .style('opacity', 1);
 
-    // Add tooltip div
+    // Create tooltip using D3
     const tooltip = d3.select(d3Container.current)
       .append('div')
       .attr('class', 'tooltip')
@@ -130,16 +130,17 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
       .style('transition', 'opacity 0.2s ease-in-out')
       .style('z-index', 1000);
 
-    const x = d3.scaleBand()
+    // D3 scales for data mapping
+    const x = d3.scaleBand()  // Create band scale for city names
       .domain(cityAverageCleanlinessData.map(d => d.city))
       .range([0, width])
       .padding(0.5);
 
-    // Determine dynamic Y-axis domain
+    // Dynamic Y-axis domain calculation using D3
     let yAxisMin = 0;
     const allAverages = cityAverageCleanlinessData.map(d => d.average);
     if (allAverages.length > 0) {
-      const minDataVal = d3.min(allAverages);
+      const minDataVal = d3.min(allAverages);  // Get minimum value
       if (minDataVal !== undefined) { // Ensure minDataVal is a number
         yAxisMin = Math.max(0, minDataVal - 1); // Start 1 unit below min, but not less than 0
       }
@@ -151,14 +152,14 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
     }
     if (yAxisMin >= 9 && d3.max(allAverages) === 10 && d3.min(allAverages) === 10) yAxisMin = 9; // if all are 10, show 9-10
 
-    const y = d3.scaleLinear()
-      .domain([yAxisMin, 10]) // Dynamic min, fixed max at 10
+    const y = d3.scaleLinear()  // Create linear scale for cleanliness scores
+      .domain([yAxisMin, 10])
       .range([height, 0]);
 
-    // X-axis with animation
+    // Create and style X-axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x))  // Create bottom axis
       .selectAll('text')
         .style('text-anchor', 'end')
         .attr('dx', '-.8em')
@@ -171,9 +172,9 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .duration(800)
         .style('opacity', 1);
 
-    // Y-axis with animation
+    // Create and style Y-axis
     svg.append('g')
-      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d))
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d))  // Create left axis with 5 ticks
       .selectAll('text')
         .style('font-size', '10px')
         .style('fill', '#191919')
@@ -182,7 +183,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .duration(800)
         .style('opacity', 1);
 
-    // Lollipop sticks (vertical lines) with animation
+    // Create lollipop sticks with D3 transitions
     svg.selectAll('.stick')
       .data(cityAverageCleanlinessData)
       .join('line')
@@ -199,7 +200,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .ease(d3.easeCubicInOut)
         .attr('y2', d => y(d.average));
 
-    // Dots with animation and tooltips
+    // Create dots with D3 transitions and interactions
     svg.selectAll('.dot')
       .data(cityAverageCleanlinessData)
       .join('circle')
@@ -264,7 +265,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .attr('cy', d => y(d.average))
         .attr('r', 5);
 
-    // City labels (if any, e.g. value labels) - staggered after dots
+    // Create city labels with D3 transitions
     svg.selectAll('.dot-label')
       .data(cityAverageCleanlinessData)
       .join('text')
@@ -283,7 +284,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .attr('y', d => y(d.average) + 3)
         .style('opacity', 1);
 
-    // Horizontal line for userMinCleanliness with animation
+    // Create horizontal line for minimum cleanliness with D3 transitions
     if (userMinCleanliness !== null && y(userMinCleanliness) >= 0 && y(userMinCleanliness) <= height) {
       svg.append('line')
         .attr('x1', 0)
@@ -315,7 +316,7 @@ const CityCleanlinessBarChart = ({ userMinCleanliness }) => {
         .style('opacity', 1);
     }
     
-    // Horizontal line for Grand Average Cleanliness with animation
+    // Create horizontal line for grand average with D3 transitions
     if (grandAverageCleanliness > 0 && y(grandAverageCleanliness) >= 0 && y(grandAverageCleanliness) <= height) {
       svg.append('line')
         .attr('x1', 0)

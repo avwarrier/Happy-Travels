@@ -32,8 +32,8 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
         const weekendPath = `/data/${city}_weekends.csv`;
         try {
           const [weekdayData, weekendData] = await Promise.all([
-            d3.csv(weekdayPath),
-            d3.csv(weekendPath)
+            d3.csv(weekdayPath),  // Load CSV data for weekdays
+            d3.csv(weekendPath)   // Load CSV data for weekends
           ]);
           const combinedData = [...(weekdayData || []), ...(weekendData || [])];
           const capacitiesInCity = combinedData
@@ -137,16 +137,16 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
         return;
       }
 
-      const svg = svgContainer.append('svg')
+      const svg = svgContainer.append('svg')  // Create SVG container
         .attr('viewBox', `0 0 ${outerWidth} ${outerHeight}`)
         .attr('preserveAspectRatio', 'xMidYMid meet')
         .attr('width', '100%') 
         .attr('height', outerHeight);
 
-      const chartG = svg.append('g')
+      const chartG = svg.append('g')  // Create chart group with margins
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-      // Add tooltip div (append to body for correct positioning)
+      // Create tooltip using D3
       const tooltip = d3.select('body')
         .append('div')
         .attr('class', 'tooltip')
@@ -161,19 +161,20 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
         .style('transition', 'opacity 0.2s ease-in-out')
         .style('z-index', 1000);
 
-      const xScale = d3.scaleBand()
+      // Create scales for data mapping
+      const xScale = d3.scaleBand()  // Create band scale for capacity bins
         .domain(histogramData.map(d => d.binName))
         .range([0, chartWidth])
         .padding(0.2);
 
-      const yScale = d3.scaleLinear()
+      const yScale = d3.scaleLinear()  // Create linear scale for percentages
         .domain([0, d3.max(histogramData, d => d.percentage) > 0 ? d3.max(histogramData, d => d.percentage) : 100])
         .range([chartHeight, 0]);
 
-      // X-axis with animation
+      // Create and style X-axis
       chartG.append('g')
         .attr('transform', `translate(0,${chartHeight})`)
-        .call(d3.axisBottom(xScale))
+        .call(d3.axisBottom(xScale))  // Create bottom axis
         .selectAll('text')
           .style('opacity', 0)
           .transition()
@@ -192,9 +193,9 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
         .duration(800)
         .style('opacity', 1);
       
-      // Y-axis with animation
+      // Create and style Y-axis
       chartG.append('g')
-        .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => `${d}%`))
+        .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => `${d}%`))  // Create left axis with percentage format
         .selectAll('text')
           .style('opacity', 0)
           .transition()
@@ -214,7 +215,7 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
         .duration(800)
         .style('opacity', 1);
 
-      // Bars with animation and tooltips
+      // Create bars with D3 transitions and interactions
       chartG.selectAll('.bar')
         .data(histogramData)
         .join('rect')
@@ -291,7 +292,7 @@ const PersonCapacityChart = ({ userSelectedCapacity }) => {
           .attr('y', d => yScale(d.percentage))
           .attr('height', d => chartHeight - yScale(d.percentage));
 
-      // Percentage labels with animation
+      // Create percentage labels with D3 transitions
       chartG.selectAll('.bar-label')
         .data(histogramData)
         .join('text')

@@ -29,8 +29,8 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
 
           try {
             const [weekdayData, weekendData] = await Promise.all([
-              d3.csv(weekdayPath),
-              d3.csv(weekendPath)
+              d3.csv(weekdayPath),  // Load CSV data for weekdays
+              d3.csv(weekendPath)   // Load CSV data for weekends
             ]);
 
             const extractDistances = (data) => {
@@ -47,7 +47,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
             extractDistances(weekendData);
 
             if (cityMetroDistances.length > 0) {
-              const medianDist = d3.median(cityMetroDistances);
+              const medianDist = d3.median(cityMetroDistances);  // Calculate median distance using D3
               processedMedianDistances.push({ city: city.charAt(0).toUpperCase() + city.slice(1), medianDistance: medianDist });
             } else {
               console.warn(`No metro_dist data for ${city}`);
@@ -134,7 +134,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Add tooltip div
+    // Create tooltip using D3
     const tooltip = d3.select(d3Container.current)
       .append('div')
       .attr('class', 'tooltip')
@@ -149,21 +149,23 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .style('transition', 'opacity 0.2s ease-in-out')
       .style('z-index', 1000);
 
+    // Calculate data bounds using D3
     const maxDistanceInData = d3.max(cdfData, d => d.distance);
     const xMax = Math.max(maxDistanceInData || 0, userMetroDistance || 0, 1);
 
-    const x = d3.scaleLinear()
+    // Create scales for data mapping
+    const x = d3.scaleLinear()  // Create linear scale for distances
       .domain([0, xMax * 1.05])
       .range([0, width]);
 
-    const y = d3.scaleLinear()
+    const y = d3.scaleLinear()  // Create linear scale for CDF values
       .domain([0, 1])
       .range([height, 0]);
 
-    // X-axis with animation
+    // Create and style X-axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d.toFixed(1)}km`))
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d.toFixed(1)}km`))  // Create bottom axis with 5 ticks
       .selectAll('text')
         .style('opacity', 0)
         .transition()
@@ -182,9 +184,9 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .duration(800)
       .style('opacity', 1);
 
-    // Y-axis with animation
+    // Create and style Y-axis
     svg.append('g')
-      .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')))
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')))  // Create left axis with percentage format
       .selectAll('text')
         .style('opacity', 0)
         .transition()
@@ -205,12 +207,13 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .duration(800)
       .style('opacity', 1);
 
-    // CDF Line with animation
+    // Create CDF line with D3 line generator
     const line = d3.line()
       .x(d => x(d.distance))
       .y(d => y(d.cdfValue))
-      .curve(d3.curveStepAfter);
+      .curve(d3.curveStepAfter);  // Use step curve for CDF
 
+    // Create and animate CDF path
     const path = svg.append('path')
       .datum(cdfData)
       .attr('fill', 'none')
@@ -218,7 +221,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .attr('stroke-width', 2)
       .attr('d', line);
 
-    // Animate the path drawing
+    // Animate path drawing using D3 transitions
     const totalLength = path.node().getTotalLength();
     path
       .attr('stroke-dasharray', totalLength)
@@ -228,7 +231,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .ease(d3.easeCubicInOut)
       .attr('stroke-dashoffset', 0);
 
-    // Area fill with animation
+    // Create area fill with D3 area generator
     const area = d3.area()
       .x(d => x(d.distance))
       .y0(height)
@@ -236,6 +239,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .curve(d3.curveStepAfter)
       .defined(d => d.distance <= userMetroDistance);
 
+    // Create and animate area fill
     const areaPath = svg.append('path')
       .datum(cdfData.filter(d => d.distance <= userMetroDistance + 0.0001))
       .attr('fill', '#E51D51')
@@ -246,7 +250,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
       .ease(d3.easeCubicInOut)
       .attr('opacity', 0.1);
 
-    // User Cutoff Line with animation
+    // Create user cutoff line with D3 transitions
     if (userMetroDistance !== null && isFinite(userMetroDistance) && x(userMetroDistance) >= 0 && x(userMetroDistance) <= width) {
       svg.append('line')
         .attr('x1', x(userMetroDistance))
@@ -275,7 +279,7 @@ const MetroDistanceCDFChart = ({ userMetroDistance }) => {
         .style('opacity', 1);
     }
 
-    // Add City Labels with animation and tooltips
+    // Create city labels with D3 transitions and interactions
     svg.selectAll('.city-label')
       .data(cdfData.filter(d => d.city))
       .join('text')

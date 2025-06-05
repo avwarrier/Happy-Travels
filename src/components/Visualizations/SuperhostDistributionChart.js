@@ -28,8 +28,8 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
           
           try {
             const [weekdayData, weekendData] = await Promise.all([
-              d3.csv(weekdayPath),
-              d3.csv(weekendPath)
+              d3.csv(weekdayPath),  // Load CSV data for weekdays
+              d3.csv(weekendPath)   // Load CSV data for weekends
             ]);
             const combinedData = [...(weekdayData || []), ...(weekendData || [])];
             
@@ -113,7 +113,7 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
       .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Add tooltip div
+    // Create tooltip using D3
     const tooltip = d3.select(d3Container.current)
       .append('div')
       .attr('class', 'tooltip')
@@ -128,19 +128,20 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
       .style('transition', 'opacity 0.2s ease-in-out')
       .style('z-index', 1000);
 
-    const x = d3.scaleLinear()
-      .domain([0, 100]) // Percentage
+    // Create scales for data mapping
+    const x = d3.scaleLinear()  // Create linear scale for percentages
+      .domain([0, 100])
       .range([0, width]);
 
-    const y = d3.scaleBand()
+    const y = d3.scaleBand()  // Create band scale for city names
       .domain(citySuperhostData.map(d => d.city))
       .range([0, chartHeight])
-      .padding(0.4); 
+      .padding(0.4);
 
-    // X-axis with animation
+    // Create and style X-axis
     svg.append('g')
       .attr('transform', `translate(0,${chartHeight})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`))
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`))  // Create bottom axis with percentage format
       .selectAll('text')
         .style('opacity', 0)
         .transition()
@@ -159,9 +160,9 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
       .duration(800)
       .style('opacity', 1);
         
-    // Y-axis (City Names) with animation
+    // Create and style Y-axis
     svg.append('g')
-      .call(d3.axisLeft(y))
+      .call(d3.axisLeft(y))  // Create left axis for city names
       .selectAll('text')
         .style('opacity', 0)
         .transition()
@@ -169,24 +170,24 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
         .delay((d, i) => i * 100) // Stagger the animations
         .style('opacity', 1);
 
-    // Overall Average Line with animation
+    // Create average line with D3 transitions
     svg.append('line')
-      .attr('x1', 0) // Start from left
+      .attr('x1', 0)
       .attr('y1', 0)
-      .attr('x2', 0) // Start from left
+      .attr('x2', 0)
       .attr('y2', chartHeight)
       .attr('stroke', '#555555')
       .attr('stroke-width', 1.5)
       .attr('stroke-dasharray', '4,4')
       .transition()
       .duration(800)
-      .delay(800) // After axes
+      .delay(800)
       .ease(d3.easeCubicInOut)
       .attr('x1', x(overallAverage))
       .attr('x2', x(overallAverage));
 
     svg.append('text')
-      .attr('x', 0) // Start from left
+      .attr('x', 0)
       .attr('y', -5)
       .attr('text-anchor', 'start')
       .style('font-size', '10px')
@@ -200,14 +201,14 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
       .attr('x', x(overallAverage) + 4)
       .style('opacity', 1);
 
-    // Dots with animation and tooltips
+    // Create dots with D3 transitions and interactions
     svg.selectAll('.dot')
       .data(citySuperhostData)
       .join('circle')
         .attr('class', 'dot')
-        .attr('cx', 0) // Start from left
+        .attr('cx', 0)
         .attr('cy', d => y(d.city) + y.bandwidth() / 2)
-        .attr('r', 0) // Start with radius 0
+        .attr('r', 0)
         .attr('fill', d => {
           const percent = d.superhostPercent;
           if (percent <= 33) return '#FF8DA0';
@@ -219,7 +220,7 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
           d3.select(this)
             .transition()
             .duration(200)
-            .attr('r', 8) // Slightly larger on hover
+            .attr('r', 8)
             .attr('stroke', '#191919')
             .attr('stroke-width', 1.5);
 
@@ -265,12 +266,12 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
         .attr('cx', d => x(d.superhostPercent))
         .attr('r', 6);
 
-    // Value Labels with animation
+    // Create value labels with D3 transitions
     svg.selectAll('.dot-label')
       .data(citySuperhostData)
       .join('text')
         .attr('class', 'dot-label')
-        .attr('x', 0) // Start from left
+        .attr('x', 0)
         .attr('y', d => y(d.city) + y.bandwidth() / 2)
         .attr('dy', '.35em')
         .attr('text-anchor', 'start')
@@ -280,7 +281,7 @@ const SuperhostDistributionChart = ({ userSuperhostPreference }) => {
         .text(d => `${d.superhostPercent.toFixed(0)}%`)
         .transition()
         .duration(800)
-        .delay((d, i) => i * 100 + 600) // Stagger and delay after dots
+        .delay((d, i) => i * 100 + 600)
         .ease(d3.easeCubicInOut)
         .attr('x', d => x(d.superhostPercent) + 10)
         .style('opacity', 1);
