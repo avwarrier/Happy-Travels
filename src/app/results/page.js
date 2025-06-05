@@ -95,11 +95,14 @@ const page = () => {
                         </div>
                     </div>
                     <Link
-                    href={{pathname: "/map", query: {
+                    href={{
+                        pathname: "/map",
+                        query: {
+                        ...Object.fromEntries(searchParams.entries()),
                         top1: topCities[0]?.city,
                         top2: topCities[1]?.city,
                         top3: topCities[2]?.city,
-                        },}}>
+                        }}}>
                         <button className={`h-[5vh] w-[11vh] mt-[20px] cursor-pointer hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} rounded-full shadow-md`}>
                             <p className='text-white text-[2vh]'>To map</p>
                         </button>

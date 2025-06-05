@@ -3,6 +3,8 @@ import Head from 'next/head';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { europeanCities } from '@/components/Map/cityCoords';
 import { DataExaminedBarChart } from '@/components/Map/D3DataExaminedBarChart';
@@ -28,6 +30,10 @@ export default function MapPage() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [cityDataDetails, setCityDataDetails] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const gradient = "bg-gradient-to-r from-[#E51D51] to-[#D90865]"
+
+  const searchParams = useSearchParams();
+  const queryString = searchParams?.toString() ?? '';
 
 const handleCityClick = async (city) => {
   console.log('D3 City Marker clicked:', city);
@@ -74,12 +80,26 @@ const handleCityClick = async (city) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-h-screen bg-gray-100 flex flex-col items-center p-4 font-sans">
-        <header className="w-full max-w-6xl mb-6 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-            European Airbnb Data (D3 Visualization)
-          </h1>
-          <p className="text-md md:text-lg text-gray-600 mt-2">
+      <main className="min-h-screen bg-white flex flex-col items-center p-4">
+        <header className="w-full max-w-6xl mb-8 text-center">
+          <div className='flex w-full justify-between'>
+
+            <Link href={`/results?${queryString}`}>
+              <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
+                <p className='text-white text-[2vh]'>back to results</p>
+              </button>
+            </Link>
+            <h1 className="text-3xl md:text-4xl text-[5vh] text-gray-800">
+              European Airbnb Data (D3 Visualization)
+            </h1>
+            <Link href={"/"}>
+                <button className={`h-[5vh] w-[15vh] hover:opacity-90 transition-all duration-500 ease-in-out ${gradient} cursor-pointer rounded-full shadow-md`}>
+                    <p className='text-white text-[2vh]'>back to quiz</p>
+                </button>
+            </Link>
+          </div>
+
+          <p className="text-md md:text-lg text-[#E51D51] mt-2">
             Click a city marker to explore its Airbnb summary.
           </p>
         </header>
