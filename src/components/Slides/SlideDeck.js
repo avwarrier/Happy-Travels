@@ -87,7 +87,6 @@ const SlideDeck = () => {
   const [importance, setImportance] = useState({
     price: 5,
     cleanliness: '',
-    distance: '',
     roomType: '',
     superhost: '',
     capacity: '',
@@ -1261,8 +1260,9 @@ const SlideDeck = () => {
                   className="bg-[#E51D51] hover:bg-[#c21844] text-white px-8 py-3 rounded-full text-lg font-medium shadow transition-all duration-200 focus:outline-none mt-2"
                   style={{ alignSelf: 'flex-start' }}
                   onClick={() => {
-                    const hasEmpty = Object.keys(importance).some((key) => importance[key] === '');
+                    const hasEmpty = Object.keys(importance).some((key) => importance[key] === '');     
                     if (hasEmpty) {
+                      console.log(importance);
                       alert('Missing an importance value, please fill them all out!');
                     } else {
                       const queryObj = {

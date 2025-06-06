@@ -27,9 +27,9 @@ export function getCityMatch(weekday, price, cleanlinessValue, distance, superho
 
         // Distance from City
         if (city.distance <= distance) {
-            score += importance.distance;
+            score += importance.metro;
         } else {
-            score += ((3 - city.distance) / (3 - distance)) * importance.distance;
+            score += ((3 - city.distance) / (3 - distance)) * importance.metro;
         }
 
         // Superhost
@@ -54,6 +54,8 @@ export function getCityMatch(weekday, price, cleanlinessValue, distance, superho
         cityScores[cityName] = score;
     });
 
+    console.log(cityScores);
+
 
     let sumOfImportance = 0;
     Object.keys(importance).forEach(key => {
@@ -76,21 +78,4 @@ export function getCityMatch(weekday, price, cleanlinessValue, distance, superho
         });
 
     return topCities;
-}
-
-function handleRange(parameter, range, importance, lowest, highest) {
-    if (inRange(parameter, range)) {
-        return importance;
-    } else {
-        if (parameter < range[0]) {
-            console.log(importance);
-            return ((parameter - lowest) / (range[0] - lowest)) * importance;
-        } else {
-            return ((highest - parameter) / (highest - range[1])) * importance;
-        }
-    }
-}
-
-function inRange(value, range) {
-    return (value >= range[0] && value <= range[1]);
 }
