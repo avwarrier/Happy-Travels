@@ -85,14 +85,14 @@ const SlideDeck = () => {
   const [personCapacity, setPersonCapacity] = useState(0);
   const [satisfactionScore, setSatisfactionScore] = useState(50);
   const [importance, setImportance] = useState({
-    price: 5,
-    cleanliness: 4,
-    distance: 3,
-    roomType: 2,
-    superhost: 1,
-    capacity: 5,
-    satisfaction: 3,
-    metro: 3,
+    price: '',
+    cleanliness: '',
+    distance: '',
+    roomType: '',
+    superhost: '',
+    capacity: '',
+    satisfaction: '',
+    metro: '',
   });
 
   /* ────────── handler helpers ────────── */
