@@ -85,7 +85,7 @@ const SlideDeck = () => {
   const [personCapacity, setPersonCapacity] = useState(0);
   const [satisfactionScore, setSatisfactionScore] = useState(50);
   const [importance, setImportance] = useState({
-    price: '',
+    price: 5,
     cleanliness: '',
     distance: '',
     roomType: '',
